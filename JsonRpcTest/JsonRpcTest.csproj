@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{A88DEC90-3B7B-4E3F-8A69-B9807E135812}</ProjectGuid>
+    <ProjectGuid>{95F3FCCD-D85A-4160-9116-C6F4FE32D244}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>ginger</RootNamespace>
-    <AssemblyName>ginger</AssemblyName>
+    <RootNamespace>JsonRpcTest</RootNamespace>
+    <AssemblyName>JsonRpcTest</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -17,7 +17,7 @@
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <Externalconsole>true</Externalconsole>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
@@ -26,38 +26,21 @@
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <Externalconsole>true</Externalconsole>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Reference Include="Xwt.Gtk3">
-      <HintPath>lib\Xwt.Gtk3.dll</HintPath>
-    </Reference>
-    <Reference Include="Xwt.Gtk">
-      <HintPath>lib\Xwt.Gtk.dll</HintPath>
-    </Reference>
-    <Reference Include="Xwt">
-      <HintPath>lib\Xwt.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="View\Browser.cs" />
-    <Compile Include="Ginger.cs" />
-    <Compile Include="AppModel\BrowserModel.cs" />
-    <Compile Include="AppModel\ProgramModel.cs" />
-    <Compile Include="View\Program.cs" />
-    <Compile Include="Model\Servent.cs" />
-    <Compile Include="View\Browser.design.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="AppModel\" />
-    <Folder Include="Model\" />
-    <Folder Include="View\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="Rpc\Rpc.csproj">
+    <ProjectReference Include="..\Rpc\Rpc.csproj">
       <Project>{7688A181-B6F9-410C-B00B-87690430DDC3}</Project>
       <Name>Rpc</Name>
     </ProjectReference>

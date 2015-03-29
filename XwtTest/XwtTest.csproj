@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{A88DEC90-3B7B-4E3F-8A69-B9807E135812}</ProjectGuid>
+    <ProjectGuid>{C4C6826B-E1AC-4C7C-93A6-77457E906E0C}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>ginger</RootNamespace>
-    <AssemblyName>ginger</AssemblyName>
+    <RootNamespace>XwtTest</RootNamespace>
+    <AssemblyName>XwtTest</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -31,35 +31,15 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Reference Include="Xwt.Gtk3">
-      <HintPath>lib\Xwt.Gtk3.dll</HintPath>
-    </Reference>
+    <Compile Include="MainClass.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="Xwt.Gtk">
-      <HintPath>lib\Xwt.Gtk.dll</HintPath>
+      <HintPath>..\lib\Xwt.Gtk.dll</HintPath>
     </Reference>
     <Reference Include="Xwt">
-      <HintPath>lib\Xwt.dll</HintPath>
+      <HintPath>..\lib\Xwt.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="View\Browser.cs" />
-    <Compile Include="Ginger.cs" />
-    <Compile Include="AppModel\BrowserModel.cs" />
-    <Compile Include="AppModel\ProgramModel.cs" />
-    <Compile Include="View\Program.cs" />
-    <Compile Include="Model\Servent.cs" />
-    <Compile Include="View\Browser.design.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="AppModel\" />
-    <Folder Include="Model\" />
-    <Folder Include="View\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="Rpc\Rpc.csproj">
-      <Project>{7688A181-B6F9-410C-B00B-87690430DDC3}</Project>
-      <Name>Rpc</Name>
-    </ProjectReference>
   </ItemGroup>
 </Project>

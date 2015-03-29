@@ -4,12 +4,11 @@ using Xwt;
 namespace ginger.View
 {
   // ブラウザのビュー。Changed イベントに反応して状態を表示する。
-  public class Browser
+  public partial class Browser
     : Xwt.Window
   {
     AppModel.BrowserModel _model;
-    Button _button;
-    ComboBox _comboBox;
+    bool _updating = false;
 
     public Browser (AppModel.BrowserModel model)
       : base()
@@ -21,40 +20,42 @@ namespace ginger.View
       Update ();
     }
 
-    // ウィジェットの作成とコールバックの設定。
-    void Build()
+ 
+    void DoUpdate ()
     {
-      Width = 500;
-      Height = 400;
+      // コンボボックスにサーバントのリストをロードする。
+      _comboBox.Items.Clear ();
+      foreach (var servent in _model.Servents) {
+        _comboBox.Items.Add (servent.ToString ());
+      }
 
-      _comboBox = new ComboBox ();
+      var idx = _model.Servents.IndexOf (_model.SelectedServent);
+      if (idx != -1)
+        _comboBox.SelectedItem = _comboBox.Items [idx];
 
-      var vbox = new VBox ();
-      _button = new Button ();
-      _button.Clicked += (sender, e) => _model.Click();
-      vbox.PackStart (_comboBox);
-      vbox.PackStart (new Label ("↓ボタン"));
-      vbox.PackStart (_button);
-      Content = vbox;
+      Title = _model.Title;
 
-      Closed += (sender, e) => { _model.Close(); };
-      Show ();
+      LoadChannels ();
+
+      if (!_model.IsOpen)
+        this.Dispose ();
+    }
+
+    void LoadChannels()
+    {
+      _channelList.Items.Clear ();
+      int i = 0;
+      foreach (var ch in _model.Channels) {
+        _channelList.Items.Add (i, ch.info.Name);
+      }
     }
 
     // 状態の反映。
     void Update()
     {
-      // コンボボックスにサーバントのリストをロードする。
-      foreach (var servent in _model.Servents)
-      {
-        _comboBox.Items.Add(servent.ToString());
-      }
-
-      _button.Label = _model.ButtonLabel;
-      Title = _model.Title;
-
-      if (!_model.IsOpen)
-        this.Dispose ();
+      _updating = true;
+      DoUpdate ();
+      _updating = false;
     }
 
   }

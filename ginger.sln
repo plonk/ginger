@@ -3,15 +3,33 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ginger", "ginger.csproj", "{A88DEC90-3B7B-4E3F-8A69-B9807E135812}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonRpcTest", "JsonRpcTest\JsonRpcTest.csproj", "{95F3FCCD-D85A-4160-9116-C6F4FE32D244}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rpc", "Rpc\Rpc.csproj", "{7688A181-B6F9-410C-B00B-87690430DDC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XwtTest", "XwtTest\XwtTest.csproj", "{C4C6826B-E1AC-4C7C-93A6-77457E906E0C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7688A181-B6F9-410C-B00B-87690430DDC3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7688A181-B6F9-410C-B00B-87690430DDC3}.Debug|x86.Build.0 = Debug|Any CPU
+		{7688A181-B6F9-410C-B00B-87690430DDC3}.Release|x86.ActiveCfg = Release|Any CPU
+		{7688A181-B6F9-410C-B00B-87690430DDC3}.Release|x86.Build.0 = Release|Any CPU
+		{95F3FCCD-D85A-4160-9116-C6F4FE32D244}.Debug|x86.ActiveCfg = Debug|x86
+		{95F3FCCD-D85A-4160-9116-C6F4FE32D244}.Debug|x86.Build.0 = Debug|x86
+		{95F3FCCD-D85A-4160-9116-C6F4FE32D244}.Release|x86.ActiveCfg = Release|x86
+		{95F3FCCD-D85A-4160-9116-C6F4FE32D244}.Release|x86.Build.0 = Release|x86
 		{A88DEC90-3B7B-4E3F-8A69-B9807E135812}.Debug|x86.ActiveCfg = Debug|x86
 		{A88DEC90-3B7B-4E3F-8A69-B9807E135812}.Debug|x86.Build.0 = Debug|x86
 		{A88DEC90-3B7B-4E3F-8A69-B9807E135812}.Release|x86.ActiveCfg = Release|x86
 		{A88DEC90-3B7B-4E3F-8A69-B9807E135812}.Release|x86.Build.0 = Release|x86
+		{C4C6826B-E1AC-4C7C-93A6-77457E906E0C}.Debug|x86.ActiveCfg = Debug|x86
+		{C4C6826B-E1AC-4C7C-93A6-77457E906E0C}.Debug|x86.Build.0 = Debug|x86
+		{C4C6826B-E1AC-4C7C-93A6-77457E906E0C}.Release|x86.ActiveCfg = Release|x86
+		{C4C6826B-E1AC-4C7C-93A6-77457E906E0C}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 EndGlobal

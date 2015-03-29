@@ -1,19 +1,20 @@
 ﻿<Properties StartupItem="ginger.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="View/Browser.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Rpc/MyClass.cs">
     <Files>
-      <File FileName="View/Browser.cs" Line="20" Column="20" />
-      <File FileName="AppModel/BrowserModel.cs" Line="39" Column="39" />
-      <File FileName="AppModel/ProgramModel.cs" Line="44" Column="44" />
+      <File FileName="View/Browser.cs" Line="17" Column="17" />
+      <File FileName="AppModel/BrowserModel.cs" Line="6" Column="6" />
+      <File FileName="AppModel/ProgramModel.cs" Line="53" Column="53" />
       <File FileName="Ginger.cs" Line="2" Column="2" />
       <File FileName="View/Program.cs" Line="1" Column="1" />
-      <File FileName="Model/Servent.cs" Line="23" Column="23" />
+      <File FileName="Model/Servent.cs" Line="6" Column="6" />
+      <File FileName="JsonRpcTest/Program.cs" Line="22" Column="22" />
+      <File FileName="JsonRpcTest/Peercast.cs" Line="5" Column="5" />
+      <File FileName="Rpc/MyClass.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <RunToCursorBreakpoint file="/home/plonk/g/ginger/AppModel/Program.cs" line="19" column="42" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

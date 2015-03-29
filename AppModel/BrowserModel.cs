@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using ginger.Model;
+using System.Diagnostics;
+using ginger.Rpc;
 
 namespace ginger.AppModel
 {
@@ -10,21 +12,16 @@ namespace ginger.AppModel
   {
     public event ChangedEvent Changed;
 
-    public string ButtonLabel {
-      get {
-        if (_count > 0)
-          return string.Format ("オシタナ{0}", _count);
-        else
-          return "オセ";
-      }
-    }
     public string Title {
       get {
-        return "localhost:7144 - ginger";
+        if (SelectedServent != null) {
+          return string.Format ("{0} - ginger", SelectedServent.ToString());
+        }
+        else {
+          return "ginger";
+        }
       }
     }
-
-    int _count;
 
     public bool IsOpen = true;
     ProgramModel _program;
@@ -32,13 +29,6 @@ namespace ginger.AppModel
     public BrowserModel (ProgramModel program)
     {
       _program = program;
-    }
-
-    public void Click()
-    {
-      _count++;
-      Changed ();
-      _program.OpenBrowser ();
     }
 
     public void Close()
@@ -53,7 +43,36 @@ namespace ginger.AppModel
       }
     }
 
-    public Servent SelectedServent { get; set; }
+    Servent _selectedServent;
+
+    public Servent SelectedServent {
+      get {
+        return _selectedServent;
+      }
+      set {
+        Debug.Assert(Servents.Contains (value));
+        _selectedServent = value;
+        Changed ();
+      }
+    }
+
+    public Channel[] Channels {
+      get {
+        if (SelectedServent != null) {
+          return SelectedServent.Channels;
+        }
+        else {
+          return new Channel[] { };
+        }
+      }
+    }
+
+    public void OpenInBrowser()
+    {
+      System.Diagnostics.Process.Start ("http://www.google.com/");
+    }
+
+    public string VersionString { get { return "ginger version 0.0.1"; } }
   }
 }
 

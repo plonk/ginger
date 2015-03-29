@@ -29,6 +29,7 @@ namespace ginger.AppModel
     void LoadSettings()
     {
       _servents.Add (new Servent ("localhost", 7144));
+      _servents.Add (new Servent ("xubuntu-14", 7145));
     }
 
     void AddBrowser (BrowserModel browser)
