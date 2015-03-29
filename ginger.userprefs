@@ -1,16 +1,15 @@
 ﻿<Properties StartupItem="ginger.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Rpc/MyClass.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Model/Servent.cs">
     <Files>
-      <File FileName="View/Browser.cs" Line="17" Column="17" />
-      <File FileName="AppModel/BrowserModel.cs" Line="6" Column="6" />
-      <File FileName="AppModel/ProgramModel.cs" Line="53" Column="53" />
-      <File FileName="Ginger.cs" Line="2" Column="2" />
-      <File FileName="View/Program.cs" Line="1" Column="1" />
-      <File FileName="Model/Servent.cs" Line="6" Column="6" />
-      <File FileName="JsonRpcTest/Program.cs" Line="22" Column="22" />
-      <File FileName="JsonRpcTest/Peercast.cs" Line="5" Column="5" />
-      <File FileName="Rpc/MyClass.cs" Line="1" Column="1" />
+      <File FileName="View/Browser.cs" Line="34" Column="34" />
+      <File FileName="Ginger.cs" Line="30" Column="30" />
+      <File FileName="XwtTest/MainClass.cs" Line="19" Column="19" />
+      <File FileName="View/Browser.design.cs" Line="5" Column="5" />
+      <File FileName="AppModel/BrowserModel.cs" Line="38" Column="38" />
+      <File FileName="Model/Servent.cs" Line="36" Column="36" />
+      <File FileName="Rpc/Peercast.cs" Line="5" Column="5" />
+      <File FileName="Rpc/JsonRpcClient.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -1,5 +1,7 @@
 ﻿using System;
 using ginger.Rpc;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ginger.Model
 {
@@ -23,8 +25,12 @@ namespace ginger.Model
     Channel[] _Channels;
     public Channel[] Channels {
       get {
-        if (_Channels == null || _cacheInvalidated)
+        var tmp = SynchronizationContext.Current;
+        SynchronizationContext.SetSynchronizationContext (null);
+        if (_Channels == null || _cacheInvalidated) {
           _Channels = Api.GetChannelsAsync ().Result;
+        }
+        SynchronizationContext.SetSynchronizationContext(tmp);
         return _Channels;
       }
     }
