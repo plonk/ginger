@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace ginger.Rpc
+namespace ginger
 {
   public class JsonRpcClient
   {
@@ -32,6 +32,8 @@ namespace ginger.Rpc
         jobj["params"] = args;
       jobj["id"] = 1;
 
+      Debug.Print(jobj.ToString());
+      
       return jobj.ToString();
     }
 
@@ -56,6 +58,7 @@ namespace ginger.Rpc
       var req = CreateRequestMessage(method, args);
       var res = await _cli.SendAsync(req);
       var json = await res.Content.ReadAsStringAsync();
+      Debug.Print(json);
       JObject obj = JObject.Parse(json);
       // TODO: エラー処理
       return obj["result"];
@@ -66,6 +69,7 @@ namespace ginger.Rpc
       var req = CreateRequestMessage(method, args);
       var res = await _cli.SendAsync(req);
       var json = await res.Content.ReadAsStringAsync();
+      Debug.Print(json);
       JObject obj = JObject.Parse(json);
       return JsonConvert.DeserializeObject<T>(obj["result"].ToString());
     }
@@ -73,4 +77,3 @@ namespace ginger.Rpc
   }
 
 }
-

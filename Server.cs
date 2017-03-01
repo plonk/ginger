@@ -1,5 +1,4 @@
 ﻿using System;
-using ginger.Rpc;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -39,21 +38,58 @@ namespace ginger
       return _cli.InvokeAsync<Connection[]>("getChannelConnections", args);
     }
 
-    public Task<Status> GetStatus()
+    public Task<GetChannelInfoResult> GetChannelInfoAsync(string channelId)
+    {
+      var args = new JObject();
+      args["channelId"] = channelId;
+      return _cli.InvokeAsync<GetChannelInfoResult>("getChannelInfo", args);
+    }
+
+    public Task<Status> GetStatusAsync()
     {
       return _cli.InvokeAsync<Status>("getStatus");
     }
 
+    public Task<ChannelStatus> GetChannelStatusAsync(string channelId)
+    {
+      var args = new JObject();
+      args["channelId"] = channelId;
+      return _cli.InvokeAsync<ChannelStatus>("getChannelStatus", args);
+    }
+
+  }
+
+  public class GetChannelInfoResult
+  {
+    public ChannelInfo Info;
+    public Track Track;
+    public YellowPage[] YellowPages;
+
+  }
+
+  public class YellowPage
+  {
+    public int YellowPageId; // non-negative signed int32
+    public string Name;
+    public string Uri;
+    public string Protocol;
+    public ChannelInfoBrief[] Channels;
+  }
+
+  public class ChannelInfoBrief
+  {
+    public string ChannelId;
+    public string Status;
   }
 
   public class Status
   {
     public int Uptime;
     public bool? IsFirewalled;
-    public Tuple<String, int> GlobalRelayEndPoint;
-    public Tuple<String, int> GlobalDirectEndPoint;
-    public Tuple<String, int> LocalRelayEndPoint;
-    public Tuple<String, int> LocalDirectEndPoint;
+    public object[] GlobalRelayEndPoint;
+    public object[] GlobalDirectEndPoint;
+    public object[] LocalRelayEndPoint;
+    public object[] LocalDirectEndPoint;
   }
 
   public class VersionInfo

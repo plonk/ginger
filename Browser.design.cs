@@ -8,7 +8,11 @@ namespace ginger
   public partial class Browser
   {
     ComboBox _comboBox;
-    ListBox _channelList;
+    Button _reloadButton;
+    ToggleButton _autoReloadButton;
+    ToggleButton _pauseButton;
+    Label _statusLabel;
+    Notebook _notebook;
 
     // ウィジェットの作成とコールバックの設定。
     void Build()
@@ -18,13 +22,28 @@ namespace ginger
 
       BuildMainMenu();
 
-      var bar = ServerBar();
-
-
       var vbox = new VBox();
       vbox.Spacing = 10;
+
+      var buttonWidth = 30;
+      var buttonBox = new HBox() { ExpandHorizontal = false };
+      _reloadButton = new Button("↻") { WidthRequest = buttonWidth, TooltipText = "再読み込み" };
+      _autoReloadButton = new ToggleButton("⏵") { WidthRequest = buttonWidth, TooltipText = "自動読み込み開始" };
+      _pauseButton = new ToggleButton("⏸") { WidthRequest = buttonWidth, TooltipText = "自動読み込み停止" };
+      buttonBox.PackStart(_reloadButton);
+      buttonBox.PackStart(_autoReloadButton);
+      buttonBox.PackStart(_pauseButton);
+      vbox.PackStart(buttonBox);
+
+      var bar = ServerBar();
       vbox.PackStart(bar);
-      vbox.PackStart(Notebook());
+
+      var nb = Notebook();
+      _notebook = nb;
+      vbox.PackStart(nb);
+
+      _statusLabel = new Label();
+      vbox.PackStart(_statusLabel);
 
       Content = vbox;
       Show();
@@ -32,10 +51,11 @@ namespace ginger
 
     Widget ServerBar()
     {
+      var hbox = new HBox();
+      hbox.PackStart(new Label("サーバー:"));
       _comboBox = new ComboBox();
-      _comboBox.SelectionChanged += (sender, e) => {
-      };
-      return _comboBox;
+      hbox.PackStart(_comboBox, true, true); // expand, fill
+      return hbox;
     }
 
     MenuItem BuildFileMenuItem()
@@ -49,21 +69,6 @@ namespace ginger
       s.Items.Add(q);
       m.SubMenu = s;
       return m;
-    }
-
-    MenuItem BuildEditMenuItem()
-    {
-      return new MenuItem("編集");
-    }
-
-    MenuItem BuildChannelMenuItem()
-    {
-      return new MenuItem("チャンネル");
-    }
-
-    MenuItem BuildToolsMenuItem()
-    {
-      return new MenuItem("ツール");
     }
 
     MenuItem BuildHelpMenuItem()
@@ -80,9 +85,6 @@ namespace ginger
     {
       MainMenu = new Menu();
       MainMenu.Items.Add(BuildFileMenuItem());
-      // MainMenu.Items.Add (BuildEditMenuItem ());
-      // MainMenu.Items.Add (BuildChannelMenuItem ());
-      // MainMenu.Items.Add (BuildToolsMenuItem ());
       MainMenu.Items.Add(BuildHelpMenuItem());
     }
 
@@ -98,102 +100,14 @@ namespace ginger
       return nb;
     }
 
-    public MarkdownView _versionText;
-
     Widget InformationPage()
     {
-      _versionText = new MarkdownView();
-      return _versionText;
+      return new InformationPage();
     }
 
     Widget ChannelPage()
     {
-      var vbox = new VBox();
-      vbox.Margin = 10;
-      vbox.Spacing = 10;
-      var hbox = new HBox();
-
-      var list = new ListBox();
-      list.SelectionChanged += (sender, e) => {
-      };
-      _channelList = list;
-
-      var cmds = CommandBox();
-      cmds.WidthRequest = 80;
-
-      hbox.PackStart(list, true);
-      hbox.PackStart(cmds);
-
-      vbox.PackStart(hbox);
-
-      var props = ChannelProperties();
-
-      vbox.PackStart(props);
-      return vbox;
-    }
-
-    Label _channelInfoLabel;
-
-    Widget ChannelProperties()
-    {
-      var nb = new Notebook();
-
-      nb.Add(new Label(""), "接続");
-      _channelInfoLabel = new Label("");
-      nb.Add(ChannelInfoPage(), "チャンネル情報");
-      nb.Add(new Label(""), "リレーツリー");
-      return nb;
-    }
-
-    Widget CommandBox()
-    {
-      var vbox = new VBox();
-
-      var p = new Button("再生");
-      var d = new Button("切断");
-      var r = new Button("再接続");
-      var b = new Button("配信...");
-
-      foreach (var w in new Widget[] { p, d, r, b }) {
-        vbox.PackStart(w);
-      }
-      return vbox;
-    }
-
-    List<TextEntry> _channelInfoTextEntries = new List<TextEntry>();
-
-    Widget ChannelInfoPage()
-    {
-      var t = new Table();
-      t.Margin = 10;
-      t.SetColumnSpacing(1, 10);
-
-      var labels = new List<string>() {
-        "チャンネル名",
-        "ジャンル",
-        "概要",
-        "コンタクトURL",
-        "配信者コメント",
-        "チャンネルID",
-        "配信・リレー時間",
-        "ビットレート",
-        "トラックタイトル",
-        "アルバム",
-        "アーティスト",
-        "トラックジャンル",
-        "トラックURL"
-      };
-      for (int i = 0; i < labels.Count; i++) {
-        t.Add(new Label(labels [i]), 0, i);
-        var entry = new TextEntry();
-        t.Add(entry, 1, i);
-        _channelInfoTextEntries.Add(entry);
-      }
-
-      var apply = new Button("適用");
-      t.Add(apply, 1, labels.Count + 1);
-
-      return t;
+      return new ChannelPage();
     }
 
   }

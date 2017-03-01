@@ -9,23 +9,47 @@ namespace ginger
   public partial class Browser
       : Xwt.Window
   {
+    // 現在選択中のサーバー
+    public Server Server;
+
     public Browser(Ginger ginger)
       : base()
     {
       Build();
+
+      Title = "ginger";
+
+      foreach (var server in ginger.KnownServers) {
+        _comboBox.Items.Add(server, $"{server.Hostname}:{server.Port}");
+      }
+
+      _comboBox.SelectionChanged += async (sender, e) => {
+        Server = (Server)_comboBox.SelectedItem;
+        await UpdateAsync();
+      };
+
+      _notebook.CurrentTabChanged += async (sender, e) => {
+        await UpdateAsync();
+      };
     }
 
-    //public string Title {
-    //  get {
-    //    if (SelectedServer != null) {
-    //      return string.Format("{0}で稼働中の{1} - ginger", SelectedServer.ToString(), SelectedServer.VersionInfo.AgentName);
-    //    } else {
-    //      return "ginger";
-    //    }
-    //  }
-    //}
+    async Task UpdateAsync()
+    {
+      var dataview = _notebook.CurrentTab.Child as DataView;
+      if (dataview != null) {
 
-    public Server SelectedServer;
+        _statusLabel.Text = "更新中...";
+        var t = DateTime.Now;
+        await dataview.UpdateAsync(Server);
+        var msec = (DateTime.Now - t).Milliseconds;
+        _statusLabel.Text = $"更新完了 ({msec}ms)";
+      } else {
+        _statusLabel.Text = "更新することないです。";
+      }
+
+      Title = $"{Server.Hostname}:{Server.Port} - ginger";
+
+    }
 
     //Channel _selectedChannel;
     //public Channel SelectedChannel {
@@ -42,8 +66,8 @@ namespace ginger
 
     public void OpenInBrowser()
     {
-      if (SelectedServer != null) {
-        Process.Start($"http://{SelectedServer.Hostname}:{SelectedServer.Port}/");
+      if (Server != null) {
+        Process.Start($"http://{Server.Hostname}:{Server.Port}/");
       }
     }
 
