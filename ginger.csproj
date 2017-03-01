@@ -46,18 +46,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="View\Browser.cs" />
     <Compile Include="Ginger.cs" />
-    <Compile Include="AppModel\BrowserModel.cs" />
-    <Compile Include="AppModel\ProgramModel.cs" />
-    <Compile Include="View\Browser.design.cs" />
     <Compile Include="ServerAddDialog.cs" />
-    <Compile Include="Model\Server.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="AppModel\" />
-    <Folder Include="Model\" />
-    <Folder Include="View\" />
+    <Compile Include="Server.cs" />
+    <Compile Include="Browser.design.cs" />
+    <Compile Include="Browser.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Rpc\Rpc.csproj">

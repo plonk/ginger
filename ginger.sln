@@ -26,8 +26,8 @@ Global
 		$1.DirectoryNamespaceAssociation = None
 		$1.ResourceNamePolicy = FileFormatDefault
 		$0.TextStylePolicy = $2
-		$2.inheritsSet = VisualStudio
-		$2.scope = text/plain
+		$2.inheritsSet = null
+		$2.scope = text/x-csharp
 		$2.TabWidth = 2
 		$2.IndentWidth = 2
 		$2.inheritsScope = text/plain

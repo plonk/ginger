@@ -2,7 +2,7 @@
 using Xwt;
 using System.Collections.Generic;
 
-namespace ginger.View
+namespace ginger
 {
   // ウィジェットの初期化など。
   public partial class Browser
@@ -27,10 +27,6 @@ namespace ginger.View
       vbox.PackStart(Notebook());
 
       Content = vbox;
-
-      Closed += (sender, e) => {
-        _model.Close();
-      };
       Show();
     }
 
@@ -38,8 +34,6 @@ namespace ginger.View
     {
       _comboBox = new ComboBox();
       _comboBox.SelectionChanged += (sender, e) => {
-        if (!_updating)
-          _model.SelectedServer = _model.Servers [_comboBox.SelectedIndex];
       };
       return _comboBox;
     }
@@ -49,9 +43,7 @@ namespace ginger.View
       var m = new MenuItem("ファイル");
       var s = new Menu();
       var b = new MenuItem("ブラウザで表示");
-      b.Clicked += (sender, e) => _model.OpenInBrowser();
       var q = new MenuItem("終了");
-      q.Clicked += (sender, e) => _model.Program.Exit();
       s.Items.Add(b);
       s.Items.Add(new SeparatorMenuItem());
       s.Items.Add(q);
@@ -79,7 +71,6 @@ namespace ginger.View
       var s = new Menu();
       var h = new MenuItem("ヘルプ");
       var v = new MenuItem("gingerのバージョン情報");
-      v.Clicked += (sender, e) => MessageDialog.ShowMessage(this, _model.VersionString);
       h.SubMenu = s;
       s.Items.Add(v);
       return h;
@@ -107,12 +98,12 @@ namespace ginger.View
       return nb;
     }
 
-    public Label _versionLabel;
+    public MarkdownView _versionText;
 
     Widget InformationPage()
     {
-      _versionLabel = new Label("私が情報だ！");
-      return _versionLabel;
+      _versionText = new MarkdownView();
+      return _versionText;
     }
 
     Widget ChannelPage()
@@ -124,8 +115,6 @@ namespace ginger.View
 
       var list = new ListBox();
       list.SelectionChanged += (sender, e) => {
-        if (!_updating)
-          _model.SelectedChannel = _model.Channels [list.SelectedRow];
       };
       _channelList = list;
 
