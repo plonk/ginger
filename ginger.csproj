@@ -41,8 +41,8 @@
       <HintPath>lib\Xwt.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=c7439020c8fedf87">
-      <Package>monodevelop</Package>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -50,9 +50,9 @@
     <Compile Include="Ginger.cs" />
     <Compile Include="AppModel\BrowserModel.cs" />
     <Compile Include="AppModel\ProgramModel.cs" />
-    <Compile Include="View\Program.cs" />
-    <Compile Include="Model\Servent.cs" />
     <Compile Include="View\Browser.design.cs" />
+    <Compile Include="ServerAddDialog.cs" />
+    <Compile Include="Model\Server.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AppModel\" />
@@ -64,5 +64,8 @@
       <Project>{7688A181-B6F9-410C-B00B-87690430DDC3}</Project>
       <Name>Rpc</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

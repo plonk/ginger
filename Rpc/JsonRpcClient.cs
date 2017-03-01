@@ -17,31 +17,32 @@ namespace ginger.Rpc
 
     public JsonRpcClient(string endpoint)
     {
-      Debug.Assert (endpoint != null);
+      Debug.Assert(endpoint != null);
       _endpoint = endpoint;
-      _cli = new HttpClient ();
+      _cli = new HttpClient();
     }
 
     string CreateRequestBody(string method, JObject args)
     {
-      JObject jobj = new JObject ();
+      JObject jobj = new JObject();
 
-      jobj ["jsonrpc"] = "2.0";
-      jobj ["method"] = method;
-      if (args!=null)
-        jobj ["params"] = args;
-      jobj ["id"] = 1;
+      jobj["jsonrpc"] = "2.0";
+      jobj["method"] = method;
+      if (args != null)
+        jobj["params"] = args;
+      jobj["id"] = 1;
 
-      return jobj.ToString ();
+      return jobj.ToString();
     }
 
     HttpRequestMessage CreateRequestMessage(string method, JObject args)
     {
-      var req = new HttpRequestMessage (HttpMethod.Post, _endpoint);
-      req.Content = new StringContent (CreateRequestBody(method, args));
+      var req = new HttpRequestMessage(HttpMethod.Post, _endpoint);
+      req.Content = new StringContent(CreateRequestBody(method, args));
       if (Authorization != null) {
-        req.Headers.Add("Authorization", CreateBasicAuthorizationHeader (Authorization.Item1, Authorization.Item2));
+        req.Headers.Add("Authorization", CreateBasicAuthorizationHeader(Authorization.Item1, Authorization.Item2));
       }
+      req.Headers.Add("X-Requested-With", "XMLHttpRequest");
       return req;
     }
 
@@ -52,20 +53,21 @@ namespace ginger.Rpc
 
     public async Task<JToken> InvokeAsync(string method, JObject args = null)
     {
-      var req = CreateRequestMessage (method, args);
-
-      var res = await _cli.SendAsync (req);
-      var json = await res.Content.ReadAsStringAsync ();
-      JObject obj = JObject.Parse (json);
+      var req = CreateRequestMessage(method, args);
+      var res = await _cli.SendAsync(req);
+      var json = await res.Content.ReadAsStringAsync();
+      JObject obj = JObject.Parse(json);
       // TODO: エラー処理
-      return obj ["result"];
+      return obj["result"];
     }
 
     public async Task<T> InvokeAsync<T>(string method, JObject args = null)
     {
-      var jobj = await InvokeAsync (method, args);
-
-      return JsonConvert.DeserializeObject<T>(jobj.ToString ());
+      var req = CreateRequestMessage(method, args);
+      var res = await _cli.SendAsync(req);
+      var json = await res.Content.ReadAsStringAsync();
+      JObject obj = JObject.Parse(json);
+      return JsonConvert.DeserializeObject<T>(obj["result"].ToString());
     }
 
   }

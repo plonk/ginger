@@ -7,41 +7,61 @@ namespace ginger.Rpc
 {
   public class Peercast
   {
-    public JsonRpcClient RpcClient { get{ return  _cli; } }
+    public JsonRpcClient RpcClient { get { return  _cli; } }
 
     JsonRpcClient _cli;
 
-    public Peercast ()
+    public Peercast(string hostname, int port)
     {
-      _cli = new JsonRpcClient ("http://windows:7144/api/1");
-      _cli.Authorization = new Tuple<string,string> ("hk'_uK9qv-td0ag.", "3ihvZAo.s$Jp'eZh");
+      _cli = new JsonRpcClient($"http://{hostname}:{port}/api/1");
     }
 
-    public Task<Channel[]> GetChannelsAsync() { return _cli.InvokeAsync<Channel[]> ("getChannels"); }
-    public Task<VersionInfo> GetVersionInfoAsync() { return _cli.InvokeAsync<VersionInfo> ("getVersionInfo"); }
+    public Task<Channel[]> GetChannelsAsync()
+    {
+      return _cli.InvokeAsync<Channel[]>("getChannels");
+    }
+
+    public Task<VersionInfo> GetVersionInfoAsync()
+    {
+      return _cli.InvokeAsync<VersionInfo>("getVersionInfo");
+    }
 
     public Task<Connection[]> GetChannelConnectionsAsync(string channelId)
     {
-      JObject args = new JObject ();
+      JObject args = new JObject();
       args ["channelId"] = channelId;
-      return _cli.InvokeAsync<Connection[]> ("getChannelConnections", args);
+      return _cli.InvokeAsync<Connection[]>("getChannelConnections", args);
+    }
+
+    public Task<Status> GetStatus()
+    {
+      return _cli.InvokeAsync<Status>("getStatus");
     }
 
   }
+
+  public class Status
+  {
+    public int uptime;
+    public bool? isFirewalled;
+    public Tuple<String, int> globalRelayEndPoint;
+    public Tuple<String, int> globalDirectEndPoint;
+    public Tuple<String, int> localRelayEndPoint;
+    public Tuple<String, int> localDirectEndPoint;
+  }
+
   public class VersionInfo
   {
-    public string AgentName { get; set; }
+    public string AgentName;
   }
 
   public class Channel
   {
     public string ChannelId;
-    public ChannelStatus status;
-
-    public ChannelInfo info {get; set; }
-
-
-    // YellowPage YellowPages { get; set; }
+    public ChannelStatus Status;
+    public ChannelInfo Info;
+    public Track Track;
+    // YellowPage YellowPages;
   }
 
   public class ChannelStatus
@@ -60,15 +80,14 @@ namespace ginger.Rpc
 
   public class ChannelInfo
   {
-    public string Name { get; set; }
-    public string Url { get; set; }
-    public string Genre { get; set; }
-    public string Desc { get; set; }
-    public string Comment {get; set; }
-    public int Bitrate { get; set; }
-    public string ContentType { get; set; }
-    public string MimeType { get; set; }
-    public Track Track { get; set; }
+    public string Name;
+    public string Url;
+    public string Genre;
+    public string Desc;
+    public string Comment;
+    public int Bitrate;
+    public string ContentType;
+    public string MimeType;
   }
 
   public class Track
@@ -96,7 +115,5 @@ namespace ginger.Rpc
     public string[] RemoteHostStatus;
     public string RemoteName;
   }
-
-
 }
 

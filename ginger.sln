@@ -3,11 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ginger", "ginger.csproj", "{A88DEC90-3B7B-4E3F-8A69-B9807E135812}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonRpcTest", "JsonRpcTest\JsonRpcTest.csproj", "{95F3FCCD-D85A-4160-9116-C6F4FE32D244}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rpc", "Rpc\Rpc.csproj", "{7688A181-B6F9-410C-B00B-87690430DDC3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XwtTest", "XwtTest\XwtTest.csproj", "{C4C6826B-E1AC-4C7C-93A6-77457E906E0C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,17 +15,45 @@ Global
 		{7688A181-B6F9-410C-B00B-87690430DDC3}.Debug|x86.Build.0 = Debug|Any CPU
 		{7688A181-B6F9-410C-B00B-87690430DDC3}.Release|x86.ActiveCfg = Release|Any CPU
 		{7688A181-B6F9-410C-B00B-87690430DDC3}.Release|x86.Build.0 = Release|Any CPU
-		{95F3FCCD-D85A-4160-9116-C6F4FE32D244}.Debug|x86.ActiveCfg = Debug|x86
-		{95F3FCCD-D85A-4160-9116-C6F4FE32D244}.Debug|x86.Build.0 = Debug|x86
-		{95F3FCCD-D85A-4160-9116-C6F4FE32D244}.Release|x86.ActiveCfg = Release|x86
-		{95F3FCCD-D85A-4160-9116-C6F4FE32D244}.Release|x86.Build.0 = Release|x86
 		{A88DEC90-3B7B-4E3F-8A69-B9807E135812}.Debug|x86.ActiveCfg = Debug|x86
 		{A88DEC90-3B7B-4E3F-8A69-B9807E135812}.Debug|x86.Build.0 = Debug|x86
 		{A88DEC90-3B7B-4E3F-8A69-B9807E135812}.Release|x86.ActiveCfg = Release|x86
 		{A88DEC90-3B7B-4E3F-8A69-B9807E135812}.Release|x86.Build.0 = Release|x86
-		{C4C6826B-E1AC-4C7C-93A6-77457E906E0C}.Debug|x86.ActiveCfg = Debug|x86
-		{C4C6826B-E1AC-4C7C-93A6-77457E906E0C}.Debug|x86.Build.0 = Debug|x86
-		{C4C6826B-E1AC-4C7C-93A6-77457E906E0C}.Release|x86.ActiveCfg = Release|x86
-		{C4C6826B-E1AC-4C7C-93A6-77457E906E0C}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.DotNetNamingPolicy = $1
+		$1.DirectoryNamespaceAssociation = None
+		$1.ResourceNamePolicy = FileFormatDefault
+		$0.TextStylePolicy = $2
+		$2.inheritsSet = VisualStudio
+		$2.scope = text/plain
+		$2.TabWidth = 2
+		$2.IndentWidth = 2
+		$2.inheritsScope = text/plain
+		$0.CSharpFormattingPolicy = $3
+		$3.ElseNewLinePlacement = NewLine
+		$3.CatchNewLinePlacement = NewLine
+		$3.FinallyNewLinePlacement = NewLine
+		$3.BeforeMethodDeclarationParentheses = False
+		$3.BeforeMethodCallParentheses = False
+		$3.BeforeConstructorDeclarationParentheses = False
+		$3.BeforeIndexerDeclarationBracket = False
+		$3.BeforeDelegateDeclarationParentheses = False
+		$3.AfterDelegateDeclarationParameterComma = True
+		$3.NewParentheses = False
+		$3.SpacesBeforeBrackets = False
+		$3.inheritsSet = Mono
+		$3.inheritsScope = text/x-csharp
+		$3.scope = text/x-csharp
+		$3.SpaceBeforeOpenSquareBracket = False
+		$3.SpacingAfterMethodDeclarationName = False
+		$3.SpaceAfterMethodCallName = False
+		$0.TextStylePolicy = $4
+		$4.TabWidth = 2
+		$4.IndentWidth = 2
+		$4.inheritsSet = VisualStudio
+		$4.inheritsScope = text/plain
+		$4.scope = text/plain
 	EndGlobalSection
 EndGlobal

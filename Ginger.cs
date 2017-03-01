@@ -1,5 +1,6 @@
 ﻿using System;
 using Xwt;
+using System.Diagnostics;
 
 namespace ginger
 {
@@ -7,13 +8,17 @@ namespace ginger
   {
     // エントリーポイント
     [STAThread]
-    static void Main ()
+    static void Main()
     {
-      Application.Initialize (ToolkitType.Gtk);
-      var model = new AppModel.ProgramModel ();
-      new View.Program (model);
-      model.Start ();
-      Application.Run ();
+      Application.Initialize(ToolkitType.Gtk);
+
+      var model = new AppModel.ProgramModel();
+
+      // 開かれたブラウザモデルにビューを設定する。
+      model.BrowserAdded += browser => new View.Browser(browser);
+      model.OnStart();
+
+      Application.Run();
     }
   }
 }

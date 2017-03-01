@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ginger.Model;
+using Xwt;
 
 namespace ginger.AppModel
 {
@@ -12,42 +13,61 @@ namespace ginger.AppModel
   {
     // Changed の替わりに個別のイベントを持つ。
     public event BrowserAddedEvent BrowserAdded;
-    public event Action Exit;
 
-    List<BrowserModel> _browsers = new List<BrowserModel>(); 
-    List<Servent> _servents = new List<Servent>(); 
+    List<BrowserModel> _browsers = new List<BrowserModel>();
+    List<Server> _servers = new List<Server>();
 
-    public List<Servent> Servents {
-      get { return _servents; }
+    public void Exit()
+    {
+      Application.Exit();
     }
 
-    public ProgramModel ()
+    public List<Server> Servers {
+      get { return _servers; }
+    }
+
+    public ProgramModel()
     {
-      LoadSettings ();
     }
 
     void LoadSettings()
     {
-      _servents.Add (new Servent ("localhost", 7144));
-      _servents.Add (new Servent ("xubuntu-14", 7145));
+      //_servents.Add (new Servent ("localhost", 7144));
     }
 
-    void AddBrowser (BrowserModel browser)
+    void SaveSettings()
     {
-      _browsers.Add (browser);
-      BrowserAdded (browser);
     }
 
-    public void Start()
+    void AddBrowser(BrowserModel browser)
     {
-      var firstBrowser = new BrowserModel (this);
+      _browsers.Add(browser);
+      BrowserAdded(browser);
+    }
+
+    public void OnStart()
+    {
+      LoadSettings();
+
+      if (_servers.Count == 0) {
+        var dialog = new ServerAddDialog();
+        Command response = dialog.Run();
+        dialog.Close();
+        if (response == Command.Cancel)
+          System.Environment.Exit(0);
+
+        _servers.Add(new Server(dialog.Hostname, dialog.Port));
+        SaveSettings();
+      }
+
+      var firstBrowser = new BrowserModel(this);
       firstBrowser.Changed += () => {
         if (!firstBrowser.IsOpen) {
-          _browsers.Remove (firstBrowser);
+          _browsers.Remove(firstBrowser);
         }
         Update();
       };
-      AddBrowser (firstBrowser);
+      AddBrowser(firstBrowser);
     }
 
     public void Update()
@@ -58,13 +78,13 @@ namespace ginger.AppModel
 
     public void OpenBrowser()
     {
-      var browser = new BrowserModel (this);
+      var browser = new BrowserModel(this);
       browser.Changed += () => {
         if (!browser.IsOpen)
-          _browsers.Remove (browser);
-        Update ();
+          _browsers.Remove(browser);
+        Update();
       };
-      AddBrowser (browser);
+      AddBrowser(browser);
     }
   }
 }

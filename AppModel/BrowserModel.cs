@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using ginger.Model;
 using System.Diagnostics;
 using ginger.Rpc;
+using System.Linq;
+using Xwt;
 
 namespace ginger.AppModel
 {
@@ -14,8 +16,8 @@ namespace ginger.AppModel
 
     public string Title {
       get {
-        if (SelectedServent != null) {
-          return string.Format ("{0} - ginger", SelectedServent.ToString());
+        if (SelectedServer != null) {
+          return string.Format("{0}で稼働中の{1} - ginger", SelectedServer.ToString(), SelectedServer.VersionInfo.AgentName);
         }
         else {
           return "ginger";
@@ -26,7 +28,13 @@ namespace ginger.AppModel
     public bool IsOpen = true;
     ProgramModel _program;
 
-    public BrowserModel (ProgramModel program)
+    public ProgramModel Program {
+      get {
+        return _program;
+      }
+    }
+
+    public BrowserModel(ProgramModel program)
     {
       _program = program;
     }
@@ -34,32 +42,32 @@ namespace ginger.AppModel
     public void Close()
     {
       IsOpen = false;
-      Changed ();
+      Changed();
     }
 
-    public List<Servent> Servents {
+    public List<Server> Servers {
       get {
-        return _program.Servents;
+        return _program.Servers;
       }
     }
 
-    Servent _selectedServent;
+    Server _selectedServer;
 
-    public Servent SelectedServent {
+    public Server SelectedServer {
       get {
-        return _selectedServent;
+        return _selectedServer;
       }
       set {
-        Debug.Assert(Servents.Contains (value));
-        _selectedServent = value;
-        Changed ();
+        Debug.Assert(Servers.Contains(value));
+        _selectedServer = value;
+        _selectedServer.LoadAsync().ContinueWith((prev) => Application.Invoke(() => Changed()));
       }
     }
 
     public Channel[] Channels {
       get {
-        if (SelectedServent != null) {
-          return SelectedServent.Channels;
+        if (SelectedServer != null) {
+          return SelectedServer.Channels;
         }
         else {
           return new Channel[] { };
@@ -67,9 +75,25 @@ namespace ginger.AppModel
       }
     }
 
+    Channel _selectedChannel;
+
+    public Channel SelectedChannel {
+      get {
+        return _selectedChannel;
+      }
+      set {
+        Debug.Assert(Channels.Contains(value));
+        _selectedChannel = value;
+        Console.WriteLine("{0} selected", value);
+        Changed();
+      }
+    }
+
     public void OpenInBrowser()
     {
-      System.Diagnostics.Process.Start ("http://www.google.com/");
+      if (_selectedServer != null) {
+        Process.Start($"http://{_selectedServer.Hostname}:{_selectedServer.Port}/");
+      }
     }
 
     public string VersionString { get { return "ginger version 0.0.1"; } }
