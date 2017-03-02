@@ -6,7 +6,7 @@ using System.Diagnostics;
 namespace ginger
 {
   public class InformationPage
-    : VBox, DataView
+    : VBox, ServerView
   {
     Label _agentLabel;
     Label _uptimeLabel;
@@ -53,7 +53,7 @@ namespace ginger
         return $"{endpoint[0]}:{endpoint[1]}";
     }
 
-    async Task DataView.UpdateAsync(Server server)
+    async Task ServerView.UpdateAsync(Server server)
     {
       var info = await server.GetVersionInfoAsync();
       _agentLabel.Text = $"ソフトウェア: {info.AgentName}";

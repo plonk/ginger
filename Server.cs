@@ -57,6 +57,31 @@ namespace ginger
       return _cli.InvokeAsync<ChannelStatus>("getChannelStatus", args);
     }
 
+    public Task<RelayNode[]> GetChannelRelayTreeAsync(string channelId)
+    {
+      var args = new JObject();
+      args["channelId"] = channelId;
+      return _cli.InvokeAsync<RelayNode[]>("getChannelRelayTree", args);
+    }
+
+  }
+
+  public class RelayNode
+  {
+    public string SessionId;
+    public string Address;
+    public int Port;
+    public bool? IsFirewalled;
+    public int LocalRelays;
+    public int LocalDirects;
+    public bool? IsTracker;
+    public bool? IsRelayFull;
+    public bool? IsDirectFull;
+    public bool? IsReceiving;
+    public bool? IsControlFull;
+    public string Version;
+    public string VersionVP; // ?;
+    public RelayNode[] Children;
   }
 
   public class GetChannelInfoResult
@@ -146,15 +171,16 @@ namespace ginger
     public int ConnectionId;
     public string Type;
     public string Status;
-    public float SendRate;
-    public float RecvRate;
+    public double SendRate;
+    public double RecvRate;
     public string ProtocolName;
     public int? LocalRelays;
     public int? LocalDirects;
-    public int ContentPosition;
+    public UInt32 ContentPosition;
     public string AgentName;
     public string RemoteEndPoint;
     public string[] RemoteHostStatus;
     public string RemoteName;
   }
+
 }

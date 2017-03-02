@@ -19,6 +19,10 @@ namespace ginger
 
       Title = "ginger";
 
+      _reloadButton.Clicked += async (sender, e) => {
+        await UpdateAsync();
+      };
+
       foreach (var server in ginger.KnownServers) {
         _comboBox.Items.Add(server, $"{server.Hostname}:{server.Port}");
       }
@@ -35,7 +39,7 @@ namespace ginger
 
     async Task UpdateAsync()
     {
-      var dataview = _notebook.CurrentTab.Child as DataView;
+      var dataview = _notebook.CurrentTab.Child as ServerView;
       if (dataview != null) {
 
         _statusLabel.Text = "更新中...";

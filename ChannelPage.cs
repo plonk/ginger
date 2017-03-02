@@ -6,12 +6,14 @@ using System.Diagnostics;
 
 namespace ginger
 {
+  // ノートブックの「チャンネル」ページ
   public class ChannelPage
-    : VBox, DataView
+    : VBox, ServerView
   {
     ListBox _channelListBox;
     Notebook _channelPropertiesNotebook;
     ChannelInfoPage _channelInfoPage;
+    Server Server;
 
     public ChannelPage()
     {
@@ -20,18 +22,11 @@ namespace ginger
       var hbox = new HBox();
 
       _channelListBox = new ListBox();
-      _channelListBox.SelectionChanged += (sender, e) => {
-        if (_channelListBox.SelectedItem == null)
-          return;
-
-        var channel = (Channel) _channelListBox.SelectedItem;
-        _channelInfoPage.ChannelId = channel.ChannelId;
-
-
+      _channelListBox.SelectionChanged += async (sender, e) => {
+        await UpdateChannelPropertiesAsync(Server);
       };
 
       var cmds = CommandBox();
-      cmds.WidthRequest = 80;
 
       hbox.PackStart(_channelListBox, true);
       hbox.PackStart(cmds);
@@ -39,6 +34,9 @@ namespace ginger
       PackStart(hbox);
 
       _channelPropertiesNotebook = ChannelPropertiesNotebook();
+      _channelPropertiesNotebook.CurrentTabChanged += async (sender, e) => {
+        await UpdateChannelPropertiesAsync(Server);
+      };
 
       PackStart(_channelPropertiesNotebook);
     }
@@ -49,15 +47,15 @@ namespace ginger
 
       _channelInfoPage = new ChannelInfoPage();
 
-      nb.Add(new Label(""), "接続");
       nb.Add(_channelInfoPage, "チャンネル情報");
-      nb.Add(new Label(""), "リレーツリー");
+      nb.Add(new ConnectionsPage(), "接続");
+      nb.Add(new RelayTreePage(), "リレーツリー");
       return nb;
     }
 
     Widget CommandBox()
     {
-      var vbox = new VBox();
+      var vbox = new VBox() { WidthRequest = 80 };
 
       var p = new Button("再生");
       p.Clicked += (sender, e) => {
@@ -88,28 +86,27 @@ namespace ginger
       return vbox;
     }
 
-    async Task UpdateChannelProperties(Server server)
+    async Task UpdateChannelPropertiesAsync(Server server)
     {
-      Debug.Print("ChannelPage UpdateChannelProperties");
-      var page = _channelPropertiesNotebook.CurrentTab.Child as DataView;
-      Debug.Print("{0}", page ==null);
+      var page = _channelPropertiesNotebook.CurrentTab.Child as ChannelView;
 
       if (page != null)
-        await page.UpdateAsync(server);
+        await page.UpdateAsync(server, ((Channel) _channelListBox.SelectedItem)?.ChannelId);
     }
 
-    async Task DataView.UpdateAsync(Server server)
+    async Task ServerView.UpdateAsync(Server server)
     {
-      Debug.Print("ChannelPage UpdateAsync");
+      Server = server;
       var channels = await server.GetChannelsAsync();
 
+      // チャンネルリストを更新。
       _channelListBox.Items.Clear();
       foreach (var channel in channels) {
         _channelListBox.Items.Add(channel, channel.Info.Name);
       }
-      _channelInfoPage.ChannelId = null;
 
-      await UpdateChannelProperties(server);
+      // チャンネルのプロパティのノートブックを更新。
+      await UpdateChannelPropertiesAsync(server);
     }
   }
 }

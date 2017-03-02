@@ -52,11 +52,14 @@
     <Compile Include="Server.cs" />
     <Compile Include="Browser.design.cs" />
     <Compile Include="Browser.cs" />
-    <Compile Include="DataView.cs" />
     <Compile Include="JsonRpcClient.cs" />
     <Compile Include="InformationPage.cs" />
     <Compile Include="ChannelPage.cs" />
     <Compile Include="ChannelInfoPage.cs" />
+    <Compile Include="ServerView.cs" />
+    <Compile Include="ChannelView.cs" />
+    <Compile Include="RelayTreePage.cs" />
+    <Compile Include="ConnectionsPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

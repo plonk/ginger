@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace ginger
 {
-  public interface DataView
+  public interface ServerView
   {
     Task UpdateAsync(Server server);
   }

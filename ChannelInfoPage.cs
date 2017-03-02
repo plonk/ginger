@@ -7,10 +7,9 @@ using System.Diagnostics;
 namespace ginger
 {
   public class ChannelInfoPage
-    : Table, DataView
+    : Table, ChannelView
   {
     List<TextEntry> _channelInfoTextEntries = new List<TextEntry>();
-    public string ChannelId;
 
     public ChannelInfoPage()
       : base()
@@ -44,22 +43,20 @@ namespace ginger
       Add(apply, 1, labels.Count + 1);
     }
 
-    async Task DataView.UpdateAsync(Server server)
+    async Task ChannelView.UpdateAsync(Server server, string channelId)
     {
-      Debug.Print("ChannelInfoPage UpdateAsync");
-
-      if (ChannelId != null) {
-        var result = await server.GetChannelInfoAsync(ChannelId);
+      if (channelId != null) {
+        var result = await server.GetChannelInfoAsync(channelId);
         var i = result.Info;
         var t = result.Track;
-        var s = await server.GetChannelStatusAsync(ChannelId);
+        var s = await server.GetChannelStatusAsync(channelId);
         var values = new string[] {
           i.Name,
           i.Genre,
           i.Desc,
           i.Url,
           i.Comment,
-          ChannelId,
+          channelId,
           s.Uptime.ToString(),
           i.Bitrate.ToString(),
           t.Name,
