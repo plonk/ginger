@@ -1,6 +1,7 @@
 ﻿using System;
 using Xwt;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace ginger
 {
@@ -46,6 +47,13 @@ namespace ginger
       return vbox;
     }
 
+    int BitrateKbps(Connection connection)
+    {
+      double recv = connection.RecvRate.HasValue ? connection.RecvRate.Value : 0.0;
+      double send = connection.SendRate.HasValue ? connection.SendRate.Value : 0.0;
+      return (int)Math.Round((recv + send) * 8 / 1000);
+    }
+
     async Task ChannelView.UpdateAsync(Server server, string channelId)
     {
       if (server == null || channelId == null) {
@@ -54,16 +62,21 @@ namespace ginger
       }
 
       var connections = await server.GetChannelConnectionsAsync(channelId);
+      int index = _listView.SelectedRow;
+      Debug.Print("index={0}", index);
       _listStore.Clear();
       foreach (var connection in connections) {
         int row = _listStore.AddRow();
+        int bitrate = BitrateKbps(connection);
         _listStore.SetValues(row,
           _protocolName, connection.ProtocolName,
           _type, connection.Type,
           _status, connection.Status,
           _remoteName, connection.RemoteName,
-          _totalRate, $"{connection.RecvRate + connection.SendRate}Kbps");
+          _totalRate, $"{bitrate}Kbps");
       }
+      if (index >= 0)
+        _listView.SelectRow(index);
     }
   }
 }

@@ -13,23 +13,33 @@ namespace ginger
     ToggleButton _pauseButton;
     Label _statusLabel;
     Notebook _notebook;
+    Label _messageArea;
+    MenuItem _browserMenuItem;
+    MenuItem _quitMenuItem;
+    MenuItem _aboutMenuItem;
 
     // ウィジェットの作成とコールバックの設定。
     void Build()
     {
-      Width = 500;
-      Height = 400;
-
       BuildMainMenu();
 
       var vbox = new VBox();
       vbox.Spacing = 10;
 
-      var buttonWidth = 30;
+      var buttonWidth = 80;
       var buttonBox = new HBox() { ExpandHorizontal = false };
-      _reloadButton = new Button("↻") { WidthRequest = buttonWidth, TooltipText = "再読み込み" };
-      _autoReloadButton = new ToggleButton("⏵") { WidthRequest = buttonWidth, TooltipText = "自動読み込み開始" };
-      _pauseButton = new ToggleButton("⏸") { WidthRequest = buttonWidth, TooltipText = "自動読み込み停止" };
+      _reloadButton = new Button("再読み込み") {
+        WidthRequest = buttonWidth,
+        TooltipText = "再読み込みします。"
+      };
+      _autoReloadButton = new ToggleButton("自動") {
+        WidthRequest = buttonWidth,
+        TooltipText = "自動読み込みを開始します。"
+      };
+      _pauseButton = new ToggleButton("停止") {
+        WidthRequest = buttonWidth,
+        TooltipText = "自動読み込みを停止します。"
+      };
       buttonBox.PackStart(_reloadButton);
       buttonBox.PackStart(_autoReloadButton);
       buttonBox.PackStart(_pauseButton);
@@ -40,7 +50,10 @@ namespace ginger
 
       var nb = Notebook();
       _notebook = nb;
-      vbox.PackStart(nb);
+      vbox.PackStart(nb, true, true);
+
+      _messageArea = new Label();
+      vbox.PackStart(_messageArea, true, WidgetPlacement.Center, WidgetPlacement.Center);
 
       _statusLabel = new Label();
       vbox.PackStart(_statusLabel);
@@ -60,24 +73,24 @@ namespace ginger
 
     MenuItem BuildFileMenuItem()
     {
-      var m = new MenuItem("ファイル");
-      var s = new Menu();
-      var b = new MenuItem("ブラウザで表示");
-      var q = new MenuItem("終了");
-      s.Items.Add(b);
-      s.Items.Add(new SeparatorMenuItem());
-      s.Items.Add(q);
-      m.SubMenu = s;
-      return m;
+      var fileMenuItem = new MenuItem("ファイル");
+      var fileMenu = new Menu();
+      _browserMenuItem = new MenuItem("ブラウザで表示");
+      _quitMenuItem = new MenuItem("終了");
+      fileMenu.Items.Add(_browserMenuItem);
+      fileMenu.Items.Add(new SeparatorMenuItem());
+      fileMenu.Items.Add(_quitMenuItem);
+      fileMenuItem.SubMenu = fileMenu;
+      return fileMenuItem;
     }
 
     MenuItem BuildHelpMenuItem()
     {
       var s = new Menu();
       var h = new MenuItem("ヘルプ");
-      var v = new MenuItem("gingerのバージョン情報");
+      _aboutMenuItem = new MenuItem("gingerのバージョン情報");
       h.SubMenu = s;
-      s.Items.Add(v);
+      s.Items.Add(_aboutMenuItem);
       return h;
     }
 

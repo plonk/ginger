@@ -7,7 +7,7 @@ namespace ginger
 {
   // 「ブラウザ」ウィンドウ
   public partial class Browser
-      : Xwt.Window
+      : Window
   {
     // 現在選択中のサーバー
     public Server Server;
@@ -19,6 +19,22 @@ namespace ginger
 
       Title = "ginger";
 
+      _browserMenuItem.Clicked += (sender, e) => {
+        if (Server == null) {
+          MessageDialog.ShowError("先にサーバーを選んでね。");
+          return;
+        }
+        System.Diagnostics.Process.Start($"http://{Server.Hostname}:{Server.Port}/");
+      };
+
+      _quitMenuItem.Clicked += (sender, e) => {
+        ginger.RequestExit();
+      };
+
+      _aboutMenuItem.Clicked += (sender, e) => {
+        MessageDialog.ShowMessage("バージョン情報", ginger.VersionString);
+      };
+
       _reloadButton.Clicked += async (sender, e) => {
         await UpdateAsync();
       };
@@ -29,44 +45,57 @@ namespace ginger
 
       _comboBox.SelectionChanged += async (sender, e) => {
         Server = (Server)_comboBox.SelectedItem;
+        UpdateView();
         await UpdateAsync();
       };
 
       _notebook.CurrentTabChanged += async (sender, e) => {
         await UpdateAsync();
       };
+
+      _messageArea.Text = "サーバーを選んでくださいです。";
+      UpdateView();
+    }
+
+    void UpdateView()
+    {
+      if (_comboBox.SelectedIndex == -1) {
+        _notebook.Hide();
+        _messageArea.Show();
+      }
+      else {
+        _notebook.Show();
+        _messageArea.Hide();
+      }
     }
 
     async Task UpdateAsync()
     {
       var dataview = _notebook.CurrentTab.Child as ServerView;
       if (dataview != null) {
-
-        _statusLabel.Text = "更新中...";
-        var t = DateTime.Now;
-        await dataview.UpdateAsync(Server);
-        var msec = (DateTime.Now - t).Milliseconds;
-        _statusLabel.Text = $"更新完了 ({msec}ms)";
-      } else {
+        try {
+          _statusLabel.Text = "更新中...";
+          var t = DateTime.Now;
+          await dataview.UpdateAsync(Server);
+          var msec = (DateTime.Now - t).Milliseconds;
+          _statusLabel.Text = $"更新完了 ({msec}ms)";
+        }
+        catch (Exception e) {
+          MessageDialog.ShowError("エラー", e.Message);
+          throw;
+        }
+      }
+      else {
         _statusLabel.Text = "更新することないです。";
       }
 
-      Title = $"{Server.Hostname}:{Server.Port} - ginger";
-
+      if (Server != null) {
+        Title = $"{Server.Hostname}:{Server.Port} - ginger";
+      }
+      else {
+        Title = "ginger";
+      }
     }
-
-    //Channel _selectedChannel;
-    //public Channel SelectedChannel {
-    //  get {
-    //    return _selectedChannel;
-    //  }
-    //  set {
-    //    Debug.Assert(Channels.Contains(value));
-    //    _selectedChannel = value;
-    //    Console.WriteLine("{0} selected", value);
-    //    Changed();
-    //  }
-    //}
 
     public void OpenInBrowser()
     {
@@ -74,86 +103,5 @@ namespace ginger
         Process.Start($"http://{Server.Hostname}:{Server.Port}/");
       }
     }
-
-    //async Task Update()
-    //{
-    //  // コンボボックスにサーバントのリストをロードする。
-    //  _comboBox.Items.Clear();
-    //  foreach (var servent in _model.Servers) {
-    //    _comboBox.Items.Add(servent.ToString());
-    //  }
-
-    //  var idx = _model.Servers.IndexOf(_model.SelectedServer);
-    //  if (idx != -1)
-    //    _comboBox.SelectedItem = _comboBox.Items[idx];
-
-    //  Title = _model.Title;
-
-    //  LoadChannels();
-
-    //  LoadChannelInfo();
-
-    //  LoadVersionInfo();
-
-    //  if (!_model.IsOpen)
-    //    this.Dispose();
-    //}
-
-    //async Task LoadVersionInfo()
-    //{
-    //  if (_model.SelectedServer == null) {
-    //    _versionText.Markdown = "";
-    //    return;
-    //  }
-
-    //  if (_model.SelectedServer.VersionInfo.AgentName == null)
-    //    _versionText.Markdown = "";
-    //  else
-    //    _versionText.Markdown = _model.SelectedServer?.VersionInfo?.AgentName;
-    //}
-
-    //async Task LoadChannelInfo()
-    //{
-    //  if (_model.SelectedChannel == null)
-    //    return;
-
-    //  var c = _model.SelectedChannel;
-    //  var i = _model.SelectedChannel.Info;
-    //  var s = _model.SelectedChannel.Status;
-    //  var t = _model.SelectedChannel.Track;
-
-    //  var data = new object[] {
-    //    i.Name,
-    //    i.Genre,
-    //    i.Desc,
-    //    i.Url,
-    //    i.Comment,
-    //    c.ChannelId,
-    //    s.Uptime,
-    //    i.Bitrate,
-    //    t.Name,
-    //    t.Album,
-    //    t.Creator,
-    //    t.Genre,
-    //    t.Url
-    //  };
-
-    //  Debug.Assert(data.Length == _channelInfoTextEntries.Count);
-    //  for (int j = 0; j < data.Length; j++) {
-    //    _channelInfoTextEntries[j].Text = data[j].ToString();
-    //  }
-    //}
-
-    //async Task LoadChannels()
-    //{
-    //  int r = _channelList.SelectedRow;
-    //  _channelList.Items.Clear();
-    //  int i = 0;
-    //  foreach (var ch in _model.Channels) {
-    //    _channelList.Items.Add(i, ch.Info.Name);
-    //  }
-    //  _channelList.SelectRow(r);
-    //}
-
   }
 }

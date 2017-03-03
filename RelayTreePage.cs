@@ -21,12 +21,12 @@ namespace ginger
       Content = _treeView;
     }
 
-    void SetSubtree(TreeNavigator nav, RelayNode node)
+    void SetSubtree(TreeNavigator nav, RelayNode host)
     {
-      nav.SetValue(_ipDataField, node.Address);
-      foreach (var child in node.Children) {
-        var childNode = nav.AddChild();
-        SetSubtree(childNode, child);
+      nav.SetValue(_ipDataField, host.Address);
+      foreach (var childHost in host.Children) {
+        var childNav = nav.Clone().AddChild(); // nav は固定したいので Clone する。
+        SetSubtree(childNav, childHost);
       }
     }
 

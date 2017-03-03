@@ -64,6 +64,29 @@ namespace ginger
       return _cli.InvokeAsync<RelayNode[]>("getChannelRelayTree", args);
     }
 
+    public Task SetChannelInfoAsync(string channelId, ChannelInfo info, Track track)
+    {
+      var json_info = new JObject();
+      json_info["name"] = info.Name;
+      json_info["url"] = info.Url;
+      json_info["genre"] = info.Genre;
+      json_info["desc"] = info.Desc;
+      json_info["comment"] = info.Comment;
+
+      var json_track = new JObject();
+      json_track["name"] = track.Name;
+      json_track["genre"] = track.Genre;
+      json_track["album"] = track.Album;
+      json_track["creator"] = track.Creator;
+      json_track["url"] = track.Url;
+
+      var args = new JObject();
+      args["channelId"] = channelId;
+      args["info"] = json_info;
+      args["track"] = json_track;
+
+      return _cli.InvokeAsync("setChannelInfo", args);
+    }
   }
 
   public class RelayNode
@@ -171,12 +194,12 @@ namespace ginger
     public int ConnectionId;
     public string Type;
     public string Status;
-    public double SendRate;
-    public double RecvRate;
+    public double? SendRate;
+    public double? RecvRate;
     public string ProtocolName;
     public int? LocalRelays;
     public int? LocalDirects;
-    public UInt32 ContentPosition;
+    public UInt32? ContentPosition;
     public string AgentName;
     public string RemoteEndPoint;
     public string[] RemoteHostStatus;

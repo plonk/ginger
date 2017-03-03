@@ -2,6 +2,8 @@
 using Xwt;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Threading;
+using Newtonsoft.Json.Linq;
 
 namespace ginger
 {
@@ -13,11 +15,24 @@ namespace ginger
     [STAThread]
     static void Main()
     {
-      Application.Initialize(ToolkitType.Gtk);
+      InitializeApplication();
       var ginger = new Ginger();
       ginger.LoadSettings();
       ginger.AddBrowser(new Browser(ginger));
       Application.Run();
+    }
+
+    static void InitializeApplication()
+    {
+      //      if (System.Environment.OSVersion.Platform == PlatformID.Unix)
+      //        Application.Initialize(ToolkitType.Gtk);
+      //      else if (System.Environment.OSVersion.Platform == PlatformID.MacOSX)
+      //        Application.Initialize(ToolkitType.XamMac);
+      //      else if (System.Environment.OSVersion.Platform == PlatformID.Win32NT)
+      //        Application.Initialize(ToolkitType.Wpf);
+      //      else
+      //        Application.Initialize(ToolkitType.Gtk);
+      Application.Initialize(ToolkitType.Gtk);
     }
 
     public List<Browser> Browsers = new List<Browser>();
@@ -43,6 +58,14 @@ namespace ginger
 
     void SaveSettings()
     {
+    }
+
+    public void RequestExit()
+    {
+      foreach (var browser in Browsers) {
+        browser.Dispose();
+      }
+      Application.Exit();
     }
 
     public void OnStart()

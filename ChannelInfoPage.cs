@@ -7,15 +7,34 @@ using System.Diagnostics;
 namespace ginger
 {
   public class ChannelInfoPage
-    : Table, ChannelView
+    : VBox, ChannelView
   {
-    List<TextEntry> _channelInfoTextEntries = new List<TextEntry>();
+    TextEntry _nameTextEntry        = new TextEntry();
+    TextEntry _genreTextEntry       = new TextEntry();
+    TextEntry _descTextEntry        = new TextEntry();
+    TextEntry _urlTextEntry         = new TextEntry();
+    TextEntry _commentTextEntry     = new TextEntry();
+    TextEntry _channelIdTextEntry   = new TextEntry();
+    TextEntry _contentTypeTextEntry = new TextEntry();
+    TextEntry _uptimeTextEntry      = new TextEntry();
+    TextEntry _bitrateTextEntry     = new TextEntry();
+    TextEntry _trackNameTextEntry   = new TextEntry();
+    TextEntry _albumTextEntry       = new TextEntry();
+    TextEntry _creatorTextEntry     = new TextEntry();
+    TextEntry _trackGenreTextEntry  = new TextEntry();
+    TextEntry _trackUrlTextEntry    = new TextEntry();
+
+    List<TextEntry> _entries;
+
+    Server Server;
+    string ChannelId;
 
     public ChannelInfoPage()
       : base()
     {
       Margin = 10;
-      SetColumnSpacing(1, 10);
+      var table = new Table();
+      table.SetColumnSpacing(1, 10);
 
       var labels = new List<string>() {
         "チャンネル名",
@@ -24,55 +43,142 @@ namespace ginger
         "コンタクトURL",
         "配信者コメント",
         "チャンネルID",
-        "配信・リレー時間",
+        "形式",
         "ビットレート",
-        "トラックタイトル",
+        "配信・リレー時間",
+        "タイトル",
         "アルバム",
         "アーティスト",
-        "トラックジャンル",
-        "トラックURL"
+        "ジャンル",
+        "URL"
       };
-      for (int i = 0; i < labels.Count; i++) {
-        Add(new Label(labels[i]), 0, i);
-        var entry = new TextEntry();
-        Add(entry, 1, i);
-        _channelInfoTextEntries.Add(entry);
+      _entries = new List<TextEntry>() {
+        _nameTextEntry,
+        _genreTextEntry,
+        _descTextEntry,
+        _urlTextEntry,
+        _commentTextEntry,
+        _channelIdTextEntry,
+        _contentTypeTextEntry,
+        _bitrateTextEntry,
+        _uptimeTextEntry,
+        _trackNameTextEntry,
+        _albumTextEntry,
+        _creatorTextEntry,
+        _trackGenreTextEntry,
+        _trackUrlTextEntry,
+      };
+      for (int i = 0; i < 9; i++) {
+        table.Add(new Label(labels[i]),
+          0, i,
+          1, 1,
+          false, false,
+          WidgetPlacement.End);
+        table.Add(_entries[i],
+          1, i,
+          1, 1,  // rowspan, colspan
+          true); // hexpand
       }
 
-      var apply = new Button("適用");
-      Add(apply, 1, labels.Count + 1);
+      PackStart(table, true, true);
+
+      var trackTable = new Table();
+      trackTable.SetColumnSpacing(1, 10);
+
+      for (int i = 9; i < labels.Count; i++) {
+        trackTable.Add(new Label(labels[i]),
+          0, i,
+          1, 1,
+          false, false,
+          WidgetPlacement.End);
+        trackTable.Add(_entries[i],
+          1, i,
+          1, 1,  // rowspan, colspan
+          true); // hexpand
+      }
+
+      var expander = new Expander();
+      expander.Label = "トラック情報";
+      expander.Content = trackTable;
+      PackStart(expander);
+
+      var applyButton = new Button("適用") { WidthRequest = 80 };
+      applyButton.Clicked += async (sender, e) => {
+        await SetChannelInfo();
+      };
+      PackStart(applyButton, false, WidgetPlacement.Center, WidgetPlacement.End);
+    }
+
+    async Task SetChannelInfo()
+    {
+      await Server.SetChannelInfoAsync(ChannelId, BuildInfo(), BuildTrack());
+    }
+
+    ChannelInfo BuildInfo()
+    {
+      return new ChannelInfo() {
+        Name = _nameTextEntry.Text,
+        Url = _urlTextEntry.Text,
+        Genre = _genreTextEntry.Text,
+        Desc = _descTextEntry.Text,
+        Comment = _commentTextEntry.Text,
+      };
+    }
+
+    Track BuildTrack()
+    {
+      return new Track() {
+        Name = _trackNameTextEntry.Text,
+        Genre = _trackGenreTextEntry.Text,
+        Album = _albumTextEntry.Text,
+        Creator = _creatorTextEntry.Text,
+        Url = _trackUrlTextEntry.Text,
+      };
+    }
+
+    void UpdateEntries(string channelId, ChannelInfo i, Track t, ChannelStatus s)
+    {
+      var values = new string[] {
+        i.Name,
+        i.Genre,
+        i.Desc,
+        i.Url,
+        i.Comment,
+        channelId,
+        i.ContentType,
+        i.Bitrate.ToString(),
+        s.Uptime.ToString(),
+        t.Name,
+        t.Album,
+        t.Creator,
+        t.Genre,
+        t.Url
+      };
+      for (int j = 0; j < _entries.Count; j++) {
+        _entries[j].Text = values[j];
+      }
+    }
+
+    void ClearEntries()
+    {
+      for (int j = 0; j < _entries.Count; j++) {
+        _entries[j].Text = "";
+      }
     }
 
     async Task ChannelView.UpdateAsync(Server server, string channelId)
     {
+      Server = server;
+      ChannelId = channelId;
+
       if (channelId != null) {
         var result = await server.GetChannelInfoAsync(channelId);
-        var i = result.Info;
-        var t = result.Track;
-        var s = await server.GetChannelStatusAsync(channelId);
-        var values = new string[] {
-          i.Name,
-          i.Genre,
-          i.Desc,
-          i.Url,
-          i.Comment,
-          channelId,
-          s.Uptime.ToString(),
-          i.Bitrate.ToString(),
-          t.Name,
-          t.Album,
-          t.Creator,
-          t.Genre,
-          t.Url
-        };
-        // i.ContentType, i.MimeType
-        for (int j = 0; j < values.Length; j++) {
-          _channelInfoTextEntries[j].Text = values[j];
-        }
+        var status = await server.GetChannelStatusAsync(channelId);
+
+        UpdateEntries(channelId, result.Info, result.Track, status);
+
       } else {
-        for (int j = 0; j < _channelInfoTextEntries.Count; j++) {
-          _channelInfoTextEntries[j].Text = "";
-        }
+        ClearEntries();
       }
     }
   }
