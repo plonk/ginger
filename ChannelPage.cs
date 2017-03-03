@@ -10,16 +10,18 @@ namespace ginger
   public class ChannelPage
     : VBox, ServerView
   {
+    BrowserContext _context;
     ListBox _channelListBox;
     Notebook _channelPropertiesNotebook;
     ChannelInfoPage _channelInfoPage;
-    Server Server;
     int SelectedRow;
 
     bool _isUpdating = false;
 
-    public ChannelPage()
+    public ChannelPage(BrowserContext context)
     {
+      _context = context;
+
       Margin = 10;
       Spacing = 10;
       var hbox = new HBox();
@@ -29,9 +31,10 @@ namespace ginger
       _channelListBox.SelectionChanged += async (sender, e) => {
         if (_channelListBox.SelectedRow != SelectedRow) {
           SelectedRow = _channelListBox.SelectedRow;
+          _context.Channel = (Channel)_channelListBox.SelectedItem;
 
           if (!_isUpdating) {
-            await UpdateChannelPropertiesAsync(Server);
+            await UpdateChannelPropertiesAsync();
           }
         }
       };
@@ -45,7 +48,7 @@ namespace ginger
 
       _channelPropertiesNotebook = ChannelPropertiesNotebook();
       _channelPropertiesNotebook.CurrentTabChanged += async (sender, e) => {
-        await UpdateChannelPropertiesAsync(Server);
+        await UpdateChannelPropertiesAsync();
       };
 
       PackStart(_channelPropertiesNotebook, true, true);
@@ -55,11 +58,11 @@ namespace ginger
     {
       var nb = new Notebook();
 
-      _channelInfoPage = new ChannelInfoPage();
+      _channelInfoPage = new ChannelInfoPage(_context);
 
       nb.Add(_channelInfoPage, "チャンネル情報");
-      nb.Add(new ConnectionsPage(), "接続");
-      nb.Add(new RelayTreePage(), "リレーツリー");
+      nb.Add(new ConnectionsPage(_context), "接続");
+      nb.Add(new RelayTreePage(_context), "リレーツリー");
       return nb;
     }
 
@@ -67,61 +70,60 @@ namespace ginger
     {
       var vbox = new VBox() { WidthRequest = 80 };
 
-      var p = new Button("再生");
-      p.Clicked += (sender, e) => {
+      var playButton = new Button("再生");
+      playButton.Clicked += (sender, e) => {
         var channel = (Channel)_channelListBox.SelectedItem;
         if (channel != null)
           MessageDialog.AskQuestion($"{channel.Info.Name}を再生しようぜーっ",
             new Command[] { Command.Ok });
       };
-      var d = new Button("切断");
-      d.Clicked += (sender, e) => {
+      var disconnectButton = new Button("切断");
+      disconnectButton.Clicked += (sender, e) => {
         var channel = (Channel)_channelListBox.SelectedItem;
         if (channel != null)
           MessageDialog.AskQuestion($"{channel.Info.Name}を切断しようぜーっ",
             new Command[] { Command.Ok });
       };
-      var r = new Button("再接続");
-      r.Clicked += (sender, e) => {
+      var reconnectButton = new Button("再接続");
+      reconnectButton.Clicked += (sender, e) => {
         var channel = (Channel)_channelListBox.SelectedItem;
         if (channel != null)
           MessageDialog.AskQuestion($"{channel.Info.Name}を再接続しようぜーっ",
             new Command[] { Command.Ok }); 
       };
-      var b = new Button("配信...");
-      b.Clicked += (sender, e) => {
+      var broadcastButton = new Button("配信...");
+      broadcastButton.Clicked += (sender, e) => {
         MessageDialog.AskQuestion($"磯野ー！配信しようぜー！",
           new Command[] { Command.Ok, Command.Cancel });
         
       };
 
-      foreach (var w in new Widget[] { p, d, r, b }) {
+      foreach (var w in new Widget[] { playButton, disconnectButton, reconnectButton, broadcastButton }) {
         vbox.PackStart(w);
       }
       return vbox;
     }
 
-    async Task UpdateChannelPropertiesAsync(Server server)
+    async Task UpdateChannelPropertiesAsync()
     {
       try {
         var page = _channelPropertiesNotebook.CurrentTab.Child as ChannelView;
 
         if (page != null) {
-          await page.UpdateAsync(server, ((Channel)_channelListBox.SelectedItem)?.ChannelId);
+          await page.UpdateAsync();
         }
       }
       catch (Exception e) {
-        MessageDialog.ShowError("エラー", e.Message);
+        MessageDialog.ShowError(_context.Window, "エラー", e.Message);
         throw;
       } 
     }
 
-    async Task ServerView.UpdateAsync(Server server)
+    async Task ServerView.UpdateAsync()
     {
       _isUpdating = true;
 
-      Server = server;
-      var channels = await server.GetChannelsAsync();
+      var channels = await _context.Server.GetChannelsAsync();
 
       // チャンネルリストを更新。
       int row = _channelListBox.SelectedRow;
@@ -133,7 +135,7 @@ namespace ginger
         _channelListBox.SelectRow(row);
 
       // チャンネルのプロパティのノートブックを更新。
-      await UpdateChannelPropertiesAsync(server);
+      await UpdateChannelPropertiesAsync();
 
       _isUpdating = false;
     }

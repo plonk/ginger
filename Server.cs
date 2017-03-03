@@ -64,6 +64,11 @@ namespace ginger
       return _cli.InvokeAsync<RelayNode[]>("getChannelRelayTree", args);
     }
 
+    public Task<Settings> GetSettingsAsync()
+    {
+      return _cli.InvokeAsync<Settings>("getSettings");
+    }
+
     public Task SetChannelInfoAsync(string channelId, ChannelInfo info, Track track)
     {
       var json_info = new JObject();
@@ -87,6 +92,23 @@ namespace ginger
 
       return _cli.InvokeAsync("setChannelInfo", args);
     }
+  }
+
+  public class Settings
+  {
+    public int MaxRelays;
+    public int MaxRelaysPerChannel;
+    public int MaxDirects;
+    public int MaxDirectsPerChannel;
+    public int MaxUpstreamRate;
+    public int MaxUpstreamRatePerChannel;
+    public ChannelCleanerSettings ChannelClearner;
+  }
+
+  public class ChannelCleanerSettings
+  {
+    public int Mode;
+    public int InactiveLimit;
   }
 
   public class RelayNode

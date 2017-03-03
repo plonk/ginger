@@ -11,15 +11,18 @@ namespace ginger
   public class InformationPage
     : VBox, ServerView
   {
+    BrowserContext _context;
     Label _agentLabel;
     Label _uptimeLabel;
     Label _firewallLabel;
     Label _globalIpLabel;
     Label _localIpLabel;
 
-    public InformationPage()
+    public InformationPage(BrowserContext context)
       : base()
     {
+      _context = context;
+
       Margin = 10;
 
       var table = new Table();
@@ -89,12 +92,12 @@ namespace ginger
         return "不明";
     }
 
-    async Task ServerView.UpdateAsync(Server server)
+    async Task ServerView.UpdateAsync()
     {
-      if (server != null) {
-        var info = await server.GetVersionInfoAsync();
+      if (_context.Server != null) {
+        var info = await _context.Server.GetVersionInfoAsync();
         _agentLabel.Text = info.AgentName;
-        var status = await server.GetStatusAsync();
+        var status = await _context.Server.GetStatusAsync();
         _uptimeLabel.Text = FormatTimeSpan(TimeSpan.FromSeconds(status.Uptime));
         _firewallLabel.Text = FormatFirewallStatus(status.IsFirewalled);
         _globalIpLabel.Text = FormatEndPoint(status.GlobalRelayEndPoint);

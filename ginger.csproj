@@ -57,6 +57,8 @@
     <Compile Include="ChannelView.cs" />
     <Compile Include="RelayTreePage.cs" />
     <Compile Include="ConnectionsPage.cs" />
+    <Compile Include="BrowserContext.cs" />
+    <Compile Include="SettingsPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

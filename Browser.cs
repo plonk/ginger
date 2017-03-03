@@ -9,22 +9,23 @@ namespace ginger
   public partial class Browser
       : Window
   {
-    // 現在選択中のサーバー
-    public Server Server;
+    BrowserContext _context;
 
     public Browser(Ginger ginger)
       : base()
     {
+      _context = new BrowserContext(ginger, this);
+
       Build();
 
       Title = "ginger";
 
       _browserMenuItem.Clicked += (sender, e) => {
-        if (Server == null) {
+        if (_context.Server == null) {
           MessageDialog.ShowError(this, "先にサーバーを選んでね。");
           return;
         }
-        System.Diagnostics.Process.Start($"http://{Server.Hostname}:{Server.Port}/");
+        System.Diagnostics.Process.Start($"http://{_context.Server.Hostname}:{_context.Server.Port}/");
       };
 
       _quitMenuItem.Clicked += (sender, e) => {
@@ -44,7 +45,7 @@ namespace ginger
       }
 
       _comboBox.SelectionChanged += async (sender, e) => {
-        Server = (Server)_comboBox.SelectedItem;
+        _context.Server = (Server)_comboBox.SelectedItem;
         UpdateView();
         await UpdateAsync();
       };
@@ -76,7 +77,7 @@ namespace ginger
         try {
           _statusLabel.Text = "更新中...";
           var t = DateTime.Now;
-          await dataview.UpdateAsync(Server);
+          await dataview.UpdateAsync();
           var msec = (DateTime.Now - t).Milliseconds;
           _statusLabel.Text = $"更新完了 ({msec}ms)";
         }
@@ -89,8 +90,8 @@ namespace ginger
         _statusLabel.Text = "更新することないです。";
       }
 
-      if (Server != null) {
-        Title = $"{Server.Hostname}:{Server.Port} - ginger";
+      if (_context.Server != null) {
+        Title = $"{_context.Server.Hostname}:{_context.Server.Port} - ginger";
       }
       else {
         Title = "ginger";
@@ -99,8 +100,8 @@ namespace ginger
 
     public void OpenInBrowser()
     {
-      if (Server != null) {
-        Process.Start($"http://{Server.Hostname}:{Server.Port}/");
+      if (_context.Server != null) {
+        Process.Start($"http://{_context.Server.Hostname}:{_context.Server.Port}/");
       }
     }
   }

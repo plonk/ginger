@@ -9,6 +9,7 @@ namespace ginger
   public class ChannelInfoPage
     : VBox, ChannelView
   {
+    BrowserContext _context;
     TextEntry _nameTextEntry        = new TextEntry();
     TextEntry _genreTextEntry       = new TextEntry();
     TextEntry _descTextEntry        = new TextEntry();
@@ -26,12 +27,11 @@ namespace ginger
 
     List<TextEntry> _entries;
 
-    Server Server;
-    string ChannelId;
-
-    public ChannelInfoPage()
+    public ChannelInfoPage(BrowserContext context)
       : base()
     {
+      _context = context;
+
       Margin = 10;
       var table = new Table();
       table.SetColumnSpacing(1, 10);
@@ -111,7 +111,7 @@ namespace ginger
 
     async Task SetChannelInfo()
     {
-      await Server.SetChannelInfoAsync(ChannelId, BuildInfo(), BuildTrack());
+      await _context.Server.SetChannelInfoAsync(_context.Channel.ChannelId, BuildInfo(), BuildTrack());
     }
 
     ChannelInfo BuildInfo()
@@ -166,16 +166,13 @@ namespace ginger
       }
     }
 
-    async Task ChannelView.UpdateAsync(Server server, string channelId)
+    async Task ChannelView.UpdateAsync()
     {
-      Server = server;
-      ChannelId = channelId;
-
-      if (channelId != null) {
-        var result = await server.GetChannelInfoAsync(channelId);
-        var status = await server.GetChannelStatusAsync(channelId);
-
-        UpdateEntries(channelId, result.Info, result.Track, status);
+      if (_context.Channel != null) {
+        UpdateEntries(_context.Channel.ChannelId,
+          _context.Channel.Info, 
+          _context.Channel.Track,
+          _context.Channel.Status);
 
       } else {
         ClearEntries();

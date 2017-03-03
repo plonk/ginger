@@ -6,12 +6,15 @@ namespace ginger
 {
   public class RelayTreePage : ScrollView, ChannelView
   {
+    BrowserContext _context;
     DataField<string> _ipDataField;
     TreeView _treeView;
     TreeStore _treeStore;
 
-    public RelayTreePage() : base()
+    public RelayTreePage(BrowserContext context) : base()
     {
+      _context = context;
+
       Margin = 10;
 
       _ipDataField = new DataField<string>();
@@ -30,14 +33,14 @@ namespace ginger
       }
     }
 
-    async Task ChannelView.UpdateAsync(Server server, string channelId)
+    async Task ChannelView.UpdateAsync()
     {
-      if (server == null || channelId == null) {
+      if (_context.Server == null || _context.Channel == null) {
         _treeStore.Clear();
         return;
       }
 
-      var rootNodes = await server.GetChannelRelayTreeAsync(channelId);
+      var rootNodes = await _context.Server.GetChannelRelayTreeAsync(_context.Channel.ChannelId);
       _treeStore.Clear();
       foreach (var rootNode in rootNodes) {
         var nav = _treeStore.AddNode();

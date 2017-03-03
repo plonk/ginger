@@ -5,6 +5,6 @@ namespace ginger
 {
   public interface ServerView
   {
-    Task UpdateAsync(Server server);
+    Task UpdateAsync();
   }
 }

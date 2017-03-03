@@ -5,7 +5,7 @@ namespace ginger
 {
   public interface ChannelView
   {
-    Task UpdateAsync(Server server, string channelId);
+    Task UpdateAsync();
   }
 }
 

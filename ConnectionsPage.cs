@@ -7,6 +7,7 @@ namespace ginger
 {
   public class ConnectionsPage : HBox, ChannelView
   {
+    BrowserContext _context;
     ListView _listView = new ListView();
     ListStore _listStore;
     DataField<string> _protocolName = new DataField<string>();
@@ -15,8 +16,10 @@ namespace ginger
     DataField<string> _remoteName = new DataField<string>();
     DataField<string> _totalRate = new DataField<string>();
 
-    public ConnectionsPage()
+    public ConnectionsPage(BrowserContext context)
     {
+      _context = context;
+
       Margin = 10;
 
       _listStore = new ListStore(_protocolName, _type, _status, _remoteName, _totalRate);
@@ -54,14 +57,14 @@ namespace ginger
       return (int)Math.Round((recv + send) * 8 / 1000);
     }
 
-    async Task ChannelView.UpdateAsync(Server server, string channelId)
+    async Task ChannelView.UpdateAsync()
     {
-      if (server == null || channelId == null) {
+      if (_context.Server == null || _context.Channel == null) {
         _listStore.Clear();
         return;
       }
 
-      var connections = await server.GetChannelConnectionsAsync(channelId);
+      var connections = await _context.Server.GetChannelConnectionsAsync(_context.Channel.ChannelId);
       int index = _listView.SelectedRow;
       Debug.Print("index={0}", index);
       _listStore.Clear();
