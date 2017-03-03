@@ -104,23 +104,12 @@ namespace ginger
     Notebook Notebook()
     {
       Notebook nb = new Notebook();
-      nb.Add(InformationPage(), "情報");
-      nb.Add(ChannelPage(), "チャンネル");
-      nb.Add(new Label("接続待ち受け"), "ポートと認証");
-      nb.Add(new Label("帯域制御"), "帯域制御");
+      nb.Add(new InformationPage(_context), "情報");
+      nb.Add(new ChannelPage(_context), "チャンネル");
+      nb.Add(new SettingsPage(_context), "設定");
       nb.Add(new Label("イエローページ"), "イエローページ");
       nb.TabOrientation = NotebookTabOrientation.Top;
       return nb;
-    }
-
-    Widget InformationPage()
-    {
-      return new InformationPage();
-    }
-
-    Widget ChannelPage()
-    {
-      return new ChannelPage();
     }
 
   }
