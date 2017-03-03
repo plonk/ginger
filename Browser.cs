@@ -21,7 +21,7 @@ namespace ginger
 
       _browserMenuItem.Clicked += (sender, e) => {
         if (Server == null) {
-          MessageDialog.ShowError("先にサーバーを選んでね。");
+          MessageDialog.ShowError(this, "先にサーバーを選んでね。");
           return;
         }
         System.Diagnostics.Process.Start($"http://{Server.Hostname}:{Server.Port}/");
@@ -32,7 +32,7 @@ namespace ginger
       };
 
       _aboutMenuItem.Clicked += (sender, e) => {
-        MessageDialog.ShowMessage("バージョン情報", ginger.VersionString);
+        MessageDialog.ShowMessage(this, "バージョン情報", ginger.VersionString);
       };
 
       _reloadButton.Clicked += async (sender, e) => {
@@ -81,7 +81,7 @@ namespace ginger
           _statusLabel.Text = $"更新完了 ({msec}ms)";
         }
         catch (Exception e) {
-          MessageDialog.ShowError("エラー", e.Message);
+          MessageDialog.ShowError(this, "エラー", e.Message);
           throw;
         }
       }
