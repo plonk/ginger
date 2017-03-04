@@ -40,6 +40,12 @@ namespace ginger
         await UpdateAsync();
       };
 
+      _autoReloadButton.Clicked += (sender, e) => {
+        if (_autoReloadButton.Active) {
+          MessageDialog.ShowError(_context.Window, "まだ無理ぽ。");
+        }
+      };
+
       foreach (var server in ginger.KnownServers) {
         _comboBox.Items.Add(server, $"{server.Hostname}:{server.Port}");
       }

@@ -36,13 +36,8 @@ namespace ginger
         WidthRequest = buttonWidth,
         TooltipText = "自動読み込みを開始します。"
       };
-      _pauseButton = new ToggleButton("停止") {
-        WidthRequest = buttonWidth,
-        TooltipText = "自動読み込みを停止します。"
-      };
       buttonBox.PackStart(_reloadButton);
       buttonBox.PackStart(_autoReloadButton);
-      buttonBox.PackStart(_pauseButton);
       vbox.PackStart(buttonBox);
 
       var bar = ServerBar();
@@ -107,7 +102,7 @@ namespace ginger
       nb.Add(new InformationPage(_context), "情報");
       nb.Add(new ChannelPage(_context), "チャンネル");
       nb.Add(new SettingsPage(_context), "設定");
-      nb.Add(new Label("イエローページ"), "イエローページ");
+      nb.Add(new RootServersPage(_context), "ルートサーバー");
       nb.TabOrientation = NotebookTabOrientation.Top;
       return nb;
     }

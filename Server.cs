@@ -101,6 +101,11 @@ namespace ginger
       args["settings"] = JObject.Parse(JsonConvert.SerializeObject(settings));
       _cli.InvokeAsync("setSettings", args);
     }
+
+    async public Task<YellowPage[]> GetYellowPagesAsync()
+    {
+      return await _cli.InvokeAsync<YellowPage[]>("getYellowPages");
+    }
   }
 
   public class Settings
@@ -150,7 +155,8 @@ namespace ginger
   {
     public int YellowPageId; // non-negative signed int32
     public string Name;
-    public string Uri;
+    public string AnnounceUri;
+    public string ChannelsUri;
     public string Protocol;
     public ChannelInfoBrief[] Channels;
   }
