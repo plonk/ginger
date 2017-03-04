@@ -46,6 +46,8 @@ namespace ginger
         var nav = _treeStore.AddNode();
         SetSubtree(nav, rootNode);
       }
+
+      _treeView.ExpandAll();
     }
   }
 }

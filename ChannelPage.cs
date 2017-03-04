@@ -13,7 +13,6 @@ namespace ginger
     BrowserContext _context;
     ListBox _channelListBox;
     Notebook _channelPropertiesNotebook;
-    ChannelInfoPage _channelInfoPage;
     int SelectedRow;
 
     bool _isUpdating = false;
@@ -58,11 +57,10 @@ namespace ginger
     {
       var nb = new Notebook();
 
-      _channelInfoPage = new ChannelInfoPage(_context);
-
-      nb.Add(_channelInfoPage, "チャンネル情報");
+      nb.Add(new ChannelInfoPage(_context), "チャンネル情報");
       nb.Add(new ConnectionsPage(_context), "接続");
       nb.Add(new RelayTreePage(_context), "リレーツリー");
+      nb.Add(new TrackInfoPage(_context), "トラック情報");
       return nb;
     }
 

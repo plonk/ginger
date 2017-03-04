@@ -59,6 +59,8 @@
     <Compile Include="ConnectionsPage.cs" />
     <Compile Include="BrowserContext.cs" />
     <Compile Include="SettingsPage.cs" />
+    <Compile Include="TrackInfoPage.cs" />
+    <Compile Include="RootServersPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

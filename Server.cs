@@ -2,6 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace ginger
 {
@@ -92,23 +94,30 @@ namespace ginger
 
       return _cli.InvokeAsync("setChannelInfo", args);
     }
+
+    async public Task SetSettingsAsync(Settings settings)
+    {
+      var args = new JObject();
+      args["settings"] = JObject.Parse(JsonConvert.SerializeObject(settings));
+      _cli.InvokeAsync("setSettings", args);
+    }
   }
 
   public class Settings
   {
-    public int MaxRelays;
-    public int MaxRelaysPerChannel;
-    public int MaxDirects;
-    public int MaxDirectsPerChannel;
-    public int MaxUpstreamRate;
-    public int MaxUpstreamRatePerChannel;
-    public ChannelCleanerSettings ChannelClearner;
+    public int maxRelays;
+    public int maxRelaysPerChannel;
+    public int maxDirects;
+    public int maxDirectsPerChannel;
+    public int maxUpstreamRate;
+    public int maxUpstreamRatePerChannel;
+    public ChannelCleanerSettings channelClearner;
   }
 
   public class ChannelCleanerSettings
   {
-    public int Mode;
-    public int InactiveLimit;
+    public int mode;
+    public int inactiveLimit;
   }
 
   public class RelayNode

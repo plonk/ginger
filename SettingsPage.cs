@@ -52,7 +52,25 @@ namespace ginger
       PackStart(table, true, true);
 
       var applyButton = new Button("適用") { WidthRequest = 80 };
+      applyButton.Clicked += async (sender, e) => {
+        await ApplySettingsAsync();
+      };
       PackStart(applyButton, false, WidgetPlacement.Start, WidgetPlacement.End);
+    }
+
+    async Task ApplySettingsAsync()
+    {
+      var settings = new Settings();
+
+      settings.maxRelays       = (int)_maxRelays.Value;
+      settings.maxDirects      = (int)_maxDirects.Value;
+      settings.maxUpstreamRate = (int)_maxUpstreamRate.Value;
+
+      settings.maxRelaysPerChannel       = (int)_maxRelaysPerChannel.Value;
+      settings.maxDirectsPerChannel      = (int)_maxDirectsPerChannel.Value;
+      settings.maxUpstreamRatePerChannel = (int)_maxUpstreamRatePerChannel.Value;
+
+      await _context.Server.SetSettingsAsync(settings);
     }
 
     SpinButton IntegerSpinButton()
@@ -65,13 +83,13 @@ namespace ginger
     {
       var settings = await _context.Server.GetSettingsAsync();
 
-      _maxRelays.Value = settings.MaxRelays;
-      _maxDirects.Value = settings.MaxDirects;
-      _maxUpstreamRate.Value = settings.MaxUpstreamRate;
+      _maxRelays.Value = settings.maxRelays;
+      _maxDirects.Value = settings.maxDirects;
+      _maxUpstreamRate.Value = settings.maxUpstreamRate;
 
-      _maxRelaysPerChannel.Value = settings.MaxRelaysPerChannel;
-      _maxDirectsPerChannel.Value = settings.MaxDirectsPerChannel;
-      _maxUpstreamRatePerChannel.Value = settings.MaxUpstreamRatePerChannel;
+      _maxRelaysPerChannel.Value = settings.maxRelaysPerChannel;
+      _maxDirectsPerChannel.Value = settings.maxDirectsPerChannel;
+      _maxUpstreamRatePerChannel.Value = settings.maxUpstreamRatePerChannel;
 
     }
   }

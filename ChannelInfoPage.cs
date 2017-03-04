@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Xwt;
 using System.Diagnostics;
+using Xwt;
 
 namespace ginger
 {
@@ -10,22 +10,17 @@ namespace ginger
     : VBox, ChannelView
   {
     BrowserContext _context;
-    TextEntry _nameTextEntry        = new TextEntry();
-    TextEntry _genreTextEntry       = new TextEntry();
-    TextEntry _descTextEntry        = new TextEntry();
-    TextEntry _urlTextEntry         = new TextEntry();
-    TextEntry _commentTextEntry     = new TextEntry();
-    TextEntry _channelIdTextEntry   = new TextEntry();
-    TextEntry _contentTypeTextEntry = new TextEntry();
-    TextEntry _uptimeTextEntry      = new TextEntry();
-    TextEntry _bitrateTextEntry     = new TextEntry();
-    TextEntry _trackNameTextEntry   = new TextEntry();
-    TextEntry _albumTextEntry       = new TextEntry();
-    TextEntry _creatorTextEntry     = new TextEntry();
-    TextEntry _trackGenreTextEntry  = new TextEntry();
-    TextEntry _trackUrlTextEntry    = new TextEntry();
+    TextEntry _name = new TextEntry();
+    TextEntry _genre = new TextEntry();
+    TextEntry _desc = new TextEntry();
+    TextEntry _url = new TextEntry();
+    TextEntry _comment = new TextEntry();
+    Label _channelId = new Label();
+    Label _contentType = new Label();
+    Label _uptime = new Label();
+    Label _bitrate = new Label();
 
-    List<TextEntry> _entries;
+    List<Widget> _entries;
 
     public ChannelInfoPage(BrowserContext context)
       : base()
@@ -37,36 +32,28 @@ namespace ginger
       table.SetColumnSpacing(1, 10);
 
       var labels = new List<string>() {
-        "チャンネル名",
+        "名前",
         "ジャンル",
         "概要",
-        "コンタクトURL",
-        "配信者コメント",
-        "チャンネルID",
+        "コンタクト",
+        "コメント",
+        "ID",
         "形式",
         "ビットレート",
-        "配信・リレー時間",
-        "タイトル",
-        "アルバム",
-        "アーティスト",
-        "ジャンル",
-        "URL"
+        "稼動時間",
+
       };
-      _entries = new List<TextEntry>() {
-        _nameTextEntry,
-        _genreTextEntry,
-        _descTextEntry,
-        _urlTextEntry,
-        _commentTextEntry,
-        _channelIdTextEntry,
-        _contentTypeTextEntry,
-        _bitrateTextEntry,
-        _uptimeTextEntry,
-        _trackNameTextEntry,
-        _albumTextEntry,
-        _creatorTextEntry,
-        _trackGenreTextEntry,
-        _trackUrlTextEntry,
+      _entries = new List<Widget>() {
+        _name,
+        _genre,
+        _desc,
+        _url,
+        _comment,
+        _channelId,
+        _contentType,
+        _bitrate,
+        _uptime,
+
       };
       for (int i = 0; i < 9; i++) {
         table.Add(new Label(labels[i]),
@@ -82,26 +69,6 @@ namespace ginger
 
       PackStart(table, true, true);
 
-      var trackTable = new Table();
-      trackTable.SetColumnSpacing(1, 10);
-
-      for (int i = 9; i < labels.Count; i++) {
-        trackTable.Add(new Label(labels[i]),
-          0, i,
-          1, 1,
-          false, false,
-          WidgetPlacement.End);
-        trackTable.Add(_entries[i],
-          1, i,
-          1, 1,  // rowspan, colspan
-          true); // hexpand
-      }
-
-      var expander = new Expander();
-      expander.Label = "トラック情報";
-      expander.Content = trackTable;
-      PackStart(expander);
-
       var applyButton = new Button("適用") { WidthRequest = 80 };
       applyButton.Clicked += async (sender, e) => {
         await SetChannelInfo();
@@ -111,32 +78,31 @@ namespace ginger
 
     async Task SetChannelInfo()
     {
-      await _context.Server.SetChannelInfoAsync(_context.Channel.ChannelId, BuildInfo(), BuildTrack());
+      await _context.Server.SetChannelInfoAsync(_context.Channel.ChannelId, BuildInfo(), _context.Channel.Track);
     }
 
     ChannelInfo BuildInfo()
     {
       return new ChannelInfo() {
-        Name = _nameTextEntry.Text,
-        Url = _urlTextEntry.Text,
-        Genre = _genreTextEntry.Text,
-        Desc = _descTextEntry.Text,
-        Comment = _commentTextEntry.Text,
+        Name = _name.Text,
+        Url = _url.Text,
+        Genre = _genre.Text,
+        Desc = _desc.Text,
+        Comment = _comment.Text,
       };
     }
 
-    Track BuildTrack()
+    void SetText(Widget widget, string text)
     {
-      return new Track() {
-        Name = _trackNameTextEntry.Text,
-        Genre = _trackGenreTextEntry.Text,
-        Album = _albumTextEntry.Text,
-        Creator = _creatorTextEntry.Text,
-        Url = _trackUrlTextEntry.Text,
-      };
+      if (widget is TextEntry)
+        ((TextEntry) widget).Text = text;
+      else if (widget is Label)
+        ((Label) widget).Text = text;
+      else
+        throw new ArgumentOutOfRangeException("widget");
     }
 
-    void UpdateEntries(string channelId, ChannelInfo i, Track t, ChannelStatus s)
+    void UpdateEntries(string channelId, ChannelInfo i, ChannelStatus s)
     {
       var values = new string[] {
         i.Name,
@@ -148,21 +114,17 @@ namespace ginger
         i.ContentType,
         i.Bitrate.ToString(),
         s.Uptime.ToString(),
-        t.Name,
-        t.Album,
-        t.Creator,
-        t.Genre,
-        t.Url
+
       };
       for (int j = 0; j < _entries.Count; j++) {
-        _entries[j].Text = values[j];
+        SetText(_entries[j], values[j]);
       }
     }
 
     void ClearEntries()
     {
       for (int j = 0; j < _entries.Count; j++) {
-        _entries[j].Text = "";
+        SetText(_entries[j], "");
       }
     }
 
@@ -171,10 +133,9 @@ namespace ginger
       if (_context.Channel != null) {
         UpdateEntries(_context.Channel.ChannelId,
           _context.Channel.Info, 
-          _context.Channel.Track,
           _context.Channel.Status);
-
-      } else {
+      }
+      else {
         ClearEntries();
       }
     }
