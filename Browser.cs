@@ -16,6 +16,8 @@ namespace ginger
     {
       _context = new BrowserContext(ginger, this);
 
+      Icon = ginger.Icon;
+
       Build();
 
       Title = "ginger";
@@ -32,6 +34,11 @@ namespace ginger
         ginger.RequestExit();
       };
 
+      _prefsMenuItem.Clicked += (sender, e) => {
+        var dialog = new PrefsDialog(_context);
+        dialog.Run(_context.Window);
+      };
+
       _aboutMenuItem.Clicked += (sender, e) => {
         MessageDialog.ShowMessage(this, "バージョン情報", ginger.VersionString);
       };
@@ -40,18 +47,12 @@ namespace ginger
         await UpdateAsync();
       };
 
-      _autoReloadButton.Clicked += (sender, e) => {
-        if (_autoReloadButton.Active) {
-          MessageDialog.ShowError(_context.Window, "まだ無理ぽ。");
-        }
-      };
-
-      foreach (var server in ginger.KnownServers) {
+      foreach (var server in ginger.Servers) {
         _comboBox.Items.Add(server, $"{server.Hostname}:{server.Port}");
       }
 
       _comboBox.SelectionChanged += async (sender, e) => {
-        _context.Server = (Server)_comboBox.SelectedItem;
+        _context.Server = (Server) _comboBox.SelectedItem;
         UpdateView();
         await UpdateAsync();
       };
@@ -62,6 +63,20 @@ namespace ginger
 
       _messageArea.Text = "サーバーを選んでくださいです。";
       UpdateView();
+
+      Func<bool> callback = null;
+      callback = () => {
+        if (_autoReloadButton.Active) {
+          UpdateAsync().ContinueWith((prev) => {
+            Application.TimeoutInvoke(1000, callback);
+          });
+        } else {
+          Application.TimeoutInvoke(1000, callback);
+        }
+        return false;
+      };
+          
+      Application.TimeoutInvoke(1000, callback);
     }
 
     void UpdateView()
@@ -81,11 +96,11 @@ namespace ginger
       var dataview = _notebook.CurrentTab.Child as ServerView;
       if (dataview != null) {
         try {
-          _statusLabel.Text = "更新中...";
+          _statusLabel.Text = "更新開始……";
           var t = DateTime.Now;
           await dataview.UpdateAsync();
           var msec = (DateTime.Now - t).Milliseconds;
-          _statusLabel.Text = $"更新完了 ({msec}ms)";
+          _statusLabel.Text = $"更新開始……完了 ({msec}ms)";
         }
         catch (Exception e) {
           MessageDialog.ShowError(this, "エラー", e.Message);

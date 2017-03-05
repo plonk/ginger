@@ -10,31 +10,31 @@ namespace ginger
     ComboBox _comboBox;
     Button _reloadButton;
     ToggleButton _autoReloadButton;
-    ToggleButton _pauseButton;
     Label _statusLabel;
     Notebook _notebook;
     Label _messageArea;
     MenuItem _browserMenuItem;
     MenuItem _quitMenuItem;
+    MenuItem _prefsMenuItem;
     MenuItem _aboutMenuItem;
 
     // ウィジェットの作成とコールバックの設定。
     void Build()
     {
-      BuildMainMenu();
+      MainMenu = BuildMainMenu();
 
       var vbox = new VBox();
       vbox.Spacing = 10;
 
       var buttonWidth = 80;
       var buttonBox = new HBox() { ExpandHorizontal = false };
-      _reloadButton = new Button("再読み込み") {
+      _reloadButton = new Button("更新") {
         WidthRequest = buttonWidth,
-        TooltipText = "再読み込みします。"
+        TooltipText = "サーバーからデータをロードします。"
       };
-      _autoReloadButton = new ToggleButton("自動") {
+      _autoReloadButton = new ToggleButton("自動更新") {
         WidthRequest = buttonWidth,
-        TooltipText = "自動読み込みを開始します。"
+        TooltipText = "押し込むと自動更新を開始します。"
       };
       buttonBox.PackStart(_reloadButton);
       buttonBox.PackStart(_autoReloadButton);
@@ -79,6 +79,16 @@ namespace ginger
       return fileMenuItem;
     }
 
+    MenuItem BuildEditMenuItem()
+    {
+      var editMenuItem = new MenuItem("編集");
+      var editMenu = new Menu();
+      _prefsMenuItem = new MenuItem("設定");
+      editMenu.Items.Add(_prefsMenuItem);
+      editMenuItem.SubMenu = editMenu;
+      return editMenuItem;
+    }
+
     MenuItem BuildHelpMenuItem()
     {
       var s = new Menu();
@@ -89,11 +99,13 @@ namespace ginger
       return h;
     }
 
-    void BuildMainMenu()
+    Menu BuildMainMenu()
     {
-      MainMenu = new Menu();
-      MainMenu.Items.Add(BuildFileMenuItem());
-      MainMenu.Items.Add(BuildHelpMenuItem());
+      var mainMenu = new Menu();
+      mainMenu.Items.Add(BuildFileMenuItem());
+      mainMenu.Items.Add(BuildEditMenuItem());
+      mainMenu.Items.Add(BuildHelpMenuItem());
+      return mainMenu;
     }
 
     Notebook Notebook()

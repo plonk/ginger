@@ -61,10 +61,14 @@
     <Compile Include="SettingsPage.cs" />
     <Compile Include="TrackInfoPage.cs" />
     <Compile Include="RootServersPage.cs" />
+    <Compile Include="PrefsDialog.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="ginger.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ginger_icon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

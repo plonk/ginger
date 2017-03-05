@@ -4,6 +4,9 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Threading;
 using Newtonsoft.Json.Linq;
+using System.IO;
+using System.Reflection;
+using Xwt.Drawing;
 
 namespace ginger
 {
@@ -16,10 +19,19 @@ namespace ginger
     static void Main()
     {
       InitializeApplication();
+
       var ginger = new Ginger();
       ginger.LoadSettings();
       ginger.AddBrowser(new Browser(ginger));
+
       Application.Run();
+    }
+
+    Ginger()
+    {
+      var image_path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
+        "ginger_icon.png");
+      Icon = Image.FromFile(image_path);
     }
 
     static void InitializeApplication()
@@ -36,7 +48,7 @@ namespace ginger
     }
 
     public List<Browser> Browsers = new List<Browser>();
-    public List<Server> KnownServers = new List<Server>();
+    public List<Server> Servers = new List<Server>();
     public Server DefaultServer;
 
     void AddBrowser(Browser browser)
@@ -51,8 +63,8 @@ namespace ginger
 
     void LoadSettings()
     {
-      KnownServers.Add(new Server("localhost", 7144));
-      KnownServers.Add(new Server("windows", 7144));
+      Servers.Add(new Server("localhost", 7144));
+      Servers.Add(new Server("windows", 7144));
       DefaultServer = new Server("localhost", 7144);
     }
 
@@ -76,5 +88,7 @@ namespace ginger
     public string VersionString {
       get { return "ginger version 0.0.1"; }
     }
+
+    public Image Icon;
   }
 }
