@@ -27,7 +27,7 @@ namespace ginger
           MessageDialog.ShowError(this, "先にサーバーを選んでね。");
           return;
         }
-        System.Diagnostics.Process.Start($"http://{_context.Server.Hostname}:{_context.Server.Port}/");
+        Process.Start($"http://{_context.Server.Hostname}:{_context.Server.Port}/");
       };
 
       _quitMenuItem.Clicked += (sender, e) => {
