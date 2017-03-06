@@ -62,7 +62,7 @@ namespace ginger
 
     Widget CommandBox()
     {
-      var vbox = new VBox() {WidthRequest = 80 };
+      var vbox = new VBox {WidthRequest = 80 };
 
       _addButton = new Button("追加");
       _addButton.Clicked += (sender, e) => {

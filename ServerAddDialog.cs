@@ -7,7 +7,6 @@ namespace ginger
     : Xwt.Dialog
   {
     public ServerAddDialog()
-      : base()
     {
       Build();
     }

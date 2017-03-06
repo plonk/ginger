@@ -25,14 +25,14 @@ namespace ginger
       var trackTable = new Table();
       trackTable.SetColumnSpacing(1, 10);
 
-      var labels = new List<string>() {
+      var labels = new List<string> {
         "タイトル",
         "アルバム",
         "アーティスト",
         "ジャンル",
         "URL"
       };
-      _entries = new List<Widget>() {
+      _entries = new List<Widget> {
         _name,
         _album,
         _creator,
@@ -69,7 +69,7 @@ namespace ginger
 
     Track BuildTrack()
     {
-      return new Track() {
+      return new Track {
         Name = _name.Text,
         Genre = _genre.Text,
         Album = _album.Text,
@@ -85,7 +85,7 @@ namespace ginger
       else if (widget is Label)
         ((Label) widget).Text = text;
       else
-        throw new ArgumentOutOfRangeException("widget");
+        throw new ArgumentOutOfRangeException(nameof(widget));
     }
 
     void UpdateEntries(Track t)

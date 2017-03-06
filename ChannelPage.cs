@@ -66,7 +66,7 @@ namespace ginger
 
     Widget CommandBox()
     {
-      var vbox = new VBox() { WidthRequest = 80 };
+      var vbox = new VBox { WidthRequest = 80 };
 
       var playButton = new Button("再生");
       playButton.Clicked += (sender, e) => {

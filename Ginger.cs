@@ -63,9 +63,9 @@ namespace ginger
 
     void LoadSettings()
     {
-      Servers.Add(new Server("localhost", 7144));
-      Servers.Add(new Server("windows", 7144));
-      DefaultServer = new Server("localhost", 7144);
+      Servers.Add(new Server("ゲストOS", "localhost", 7144));
+      Servers.Add(new Server("ホストOS", "windows", 7144));
+      DefaultServer = Servers[0];
     }
 
     void SaveSettings()

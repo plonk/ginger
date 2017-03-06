@@ -19,7 +19,6 @@ namespace ginger
     Label _localIpLabel;
 
     public InformationPage(BrowserContext context)
-      : base()
     {
       _context = context;
 

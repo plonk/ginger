@@ -11,13 +11,15 @@ namespace ginger
   {
     public JsonRpcClient RpcClient { get { return _cli; } }
 
-    JsonRpcClient _cli;
+    readonly JsonRpcClient _cli;
 
+    public string Name;
     public string Hostname;
     public int Port;
 
-    public Server(string hostname, int port)
+    public Server(string name, string hostname, int port)
     {
+      Name = name;
       Hostname = hostname;
       Port = port;
       _cli = new JsonRpcClient($"http://{hostname}:{port}/api/1");

@@ -39,7 +39,7 @@ namespace ginger
 
     Box ButtonBox()
     {
-      var vbox = new VBox() { WidthRequest = 80 };
+      var vbox = new VBox { WidthRequest = 80 };
 
       var disconnectButton = new Button("切断");
       var reconnectButton = new Button("再接続");

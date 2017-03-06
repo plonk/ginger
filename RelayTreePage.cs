@@ -11,7 +11,7 @@ namespace ginger
     TreeView _treeView;
     TreeStore _treeStore;
 
-    public RelayTreePage(BrowserContext context) : base()
+    public RelayTreePage(BrowserContext context)
     {
       _context = context;
 
@@ -19,7 +19,7 @@ namespace ginger
 
       _ipDataField = new DataField<string>();
       _treeStore = new TreeStore(_ipDataField);
-      _treeView = new TreeView() { DataSource = _treeStore };
+      _treeView = new TreeView { DataSource = _treeStore };
       _treeView.Columns.Add("IP", _ipDataField);
       Content = _treeView;
     }

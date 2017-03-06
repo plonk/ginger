@@ -23,7 +23,6 @@ namespace ginger
     List<Widget> _entries;
 
     public ChannelInfoPage(BrowserContext context)
-      : base()
     {
       _context = context;
 
@@ -31,7 +30,7 @@ namespace ginger
       var table = new Table();
       table.SetColumnSpacing(1, 10);
 
-      var labels = new List<string>() {
+      var labels = new List<string> {
         "名前",
         "ジャンル",
         "概要",
@@ -41,9 +40,8 @@ namespace ginger
         "形式",
         "ビットレート",
         "稼動時間",
-
       };
-      _entries = new List<Widget>() {
+      _entries = new List<Widget> {
         _name,
         _genre,
         _desc,
@@ -53,7 +51,6 @@ namespace ginger
         _contentType,
         _bitrate,
         _uptime,
-
       };
       for (int i = 0; i < 9; i++) {
         table.Add(new Label(labels[i]),
@@ -83,7 +80,7 @@ namespace ginger
 
     ChannelInfo BuildInfo()
     {
-      return new ChannelInfo() {
+      return new ChannelInfo {
         Name = _name.Text,
         Url = _url.Text,
         Genre = _genre.Text,
@@ -99,7 +96,7 @@ namespace ginger
       else if (widget is Label)
         ((Label) widget).Text = text;
       else
-        throw new ArgumentOutOfRangeException("widget");
+        throw new ArgumentOutOfRangeException(nameof(widget));
     }
 
     void UpdateEntries(string channelId, ChannelInfo i, ChannelStatus s)
@@ -114,7 +111,6 @@ namespace ginger
         i.ContentType,
         i.Bitrate.ToString(),
         s.Uptime.ToString(),
-
       };
       for (int j = 0; j < _entries.Count; j++) {
         SetText(_entries[j], values[j]);

@@ -27,7 +27,7 @@ namespace ginger
       vbox.Spacing = 10;
 
       var buttonWidth = 80;
-      var buttonBox = new HBox() { ExpandHorizontal = false };
+      var buttonBox = new HBox { ExpandHorizontal = false };
       _reloadButton = new Button("更新") {
         WidthRequest = buttonWidth,
         TooltipText = "サーバーからデータをロードします。"

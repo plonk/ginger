@@ -39,7 +39,7 @@ namespace ginger
 
       _maxRelaysPerChannel = IntegerSpinButton();
       _maxDirectsPerChannel = IntegerSpinButton();
-      _maxUpstreamRatePerChannel = IntegerSpinButton();;
+      _maxUpstreamRatePerChannel = IntegerSpinButton();
 
       table.Add(_maxRelays, 1, 0, 1, 1, false, false, WidgetPlacement.Start);
       table.Add(_maxDirects, 1, 1, 1, 1, false, false, WidgetPlacement.Start);
@@ -75,7 +75,7 @@ namespace ginger
 
     SpinButton IntegerSpinButton()
     {
-      var button = new SpinButton() { Digits = 0, IncrementValue = 1, MaximumValue = 999 };
+      var button = new SpinButton { Digits = 0, IncrementValue = 1, MaximumValue = 999 };
       return button;
     }
 

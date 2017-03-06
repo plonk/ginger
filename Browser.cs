@@ -12,7 +12,6 @@ namespace ginger
     BrowserContext _context;
 
     public Browser(Ginger ginger)
-      : base()
     {
       _context = new BrowserContext(ginger, this);
 

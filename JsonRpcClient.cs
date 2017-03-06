@@ -10,7 +10,7 @@ namespace ginger
 {
   public class JsonRpcClient
   {
-    HttpClient _cli;
+    readonly HttpClient _cli;
     string _endpoint;
 
     public Tuple<string,string> Authorization { get; set; }
