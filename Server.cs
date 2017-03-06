@@ -9,9 +9,11 @@ namespace ginger
 {
   public class Server
   {
-    public JsonRpcClient RpcClient { get { return _cli; } }
-
-    readonly JsonRpcClient _cli;
+    JsonRpcClient RpcClient {
+      get {
+        return new JsonRpcClient($"http://{Hostname}:{Port}/api/1");
+      }
+    }
 
     public string Name;
     public string Hostname;
@@ -22,55 +24,54 @@ namespace ginger
       Name = name;
       Hostname = hostname;
       Port = port;
-      _cli = new JsonRpcClient($"http://{hostname}:{port}/api/1");
     }
 
     public Task<Channel[]> GetChannelsAsync()
     {
-      return _cli.InvokeAsync<Channel[]>("getChannels");
+      return RpcClient.InvokeAsync<Channel[]>("getChannels");
     }
 
     public Task<VersionInfo> GetVersionInfoAsync()
     {
-      return _cli.InvokeAsync<VersionInfo>("getVersionInfo");
+      return RpcClient.InvokeAsync<VersionInfo>("getVersionInfo");
     }
 
     public Task<Connection[]> GetChannelConnectionsAsync(string channelId)
     {
       JObject args = new JObject();
       args["channelId"] = channelId;
-      return _cli.InvokeAsync<Connection[]>("getChannelConnections", args);
+      return RpcClient.InvokeAsync<Connection[]>("getChannelConnections", args);
     }
 
     public Task<GetChannelInfoResult> GetChannelInfoAsync(string channelId)
     {
       var args = new JObject();
       args["channelId"] = channelId;
-      return _cli.InvokeAsync<GetChannelInfoResult>("getChannelInfo", args);
+      return RpcClient.InvokeAsync<GetChannelInfoResult>("getChannelInfo", args);
     }
 
     public Task<Status> GetStatusAsync()
     {
-      return _cli.InvokeAsync<Status>("getStatus");
+      return RpcClient.InvokeAsync<Status>("getStatus");
     }
 
     public Task<ChannelStatus> GetChannelStatusAsync(string channelId)
     {
       var args = new JObject();
       args["channelId"] = channelId;
-      return _cli.InvokeAsync<ChannelStatus>("getChannelStatus", args);
+      return RpcClient.InvokeAsync<ChannelStatus>("getChannelStatus", args);
     }
 
     public Task<RelayNode[]> GetChannelRelayTreeAsync(string channelId)
     {
       var args = new JObject();
       args["channelId"] = channelId;
-      return _cli.InvokeAsync<RelayNode[]>("getChannelRelayTree", args);
+      return RpcClient.InvokeAsync<RelayNode[]>("getChannelRelayTree", args);
     }
 
     public Task<Settings> GetSettingsAsync()
     {
-      return _cli.InvokeAsync<Settings>("getSettings");
+      return RpcClient.InvokeAsync<Settings>("getSettings");
     }
 
     public Task SetChannelInfoAsync(string channelId, ChannelInfo info, Track track)
@@ -94,19 +95,19 @@ namespace ginger
       args["info"] = json_info;
       args["track"] = json_track;
 
-      return _cli.InvokeAsync("setChannelInfo", args);
+      return RpcClient.InvokeAsync("setChannelInfo", args);
     }
 
     async public Task SetSettingsAsync(Settings settings)
     {
       var args = new JObject();
       args["settings"] = JObject.Parse(JsonConvert.SerializeObject(settings));
-      _cli.InvokeAsync("setSettings", args);
+      await RpcClient.InvokeAsync("setSettings", args);
     }
 
     async public Task<YellowPage[]> GetYellowPagesAsync()
     {
-      return await _cli.InvokeAsync<YellowPage[]>("getYellowPages");
+      return await RpcClient.InvokeAsync<YellowPage[]>("getYellowPages");
     }
   }
 

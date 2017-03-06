@@ -63,7 +63,6 @@ namespace ginger
 
     async Task SetChannelInfo()
     {
-      MessageDialog.ShowMessage(BuildTrack().Name);
       await _context.Server.SetChannelInfoAsync(_context.Channel.ChannelId, _context.Channel.Info, BuildTrack());
     }
 

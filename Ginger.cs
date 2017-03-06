@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using System.IO;
 using System.Reflection;
 using Xwt.Drawing;
+using Newtonsoft.Json;
 
 namespace ginger
 {
@@ -14,6 +15,10 @@ namespace ginger
   // ブラウザウィンドウが 0 個になったら終了する。
   public class Ginger
   {
+    public List<Browser> Browsers = new List<Browser>();
+    public List<Server> Servers = new List<Server>();
+    public Image Icon;
+
     // エントリーポイント
     [STAThread]
     static void Main()
@@ -36,20 +41,8 @@ namespace ginger
 
     static void InitializeApplication()
     {
-      //      if (System.Environment.OSVersion.Platform == PlatformID.Unix)
-      //        Application.Initialize(ToolkitType.Gtk);
-      //      else if (System.Environment.OSVersion.Platform == PlatformID.MacOSX)
-      //        Application.Initialize(ToolkitType.XamMac);
-      //      else if (System.Environment.OSVersion.Platform == PlatformID.Win32NT)
-      //        Application.Initialize(ToolkitType.Wpf);
-      //      else
-      //        Application.Initialize(ToolkitType.Gtk);
       Application.Initialize(ToolkitType.Gtk);
     }
-
-    public List<Browser> Browsers = new List<Browser>();
-    public List<Server> Servers = new List<Server>();
-    public Server DefaultServer;
 
     void AddBrowser(Browser browser)
     {
@@ -61,15 +54,39 @@ namespace ginger
       };
     }
 
-    void LoadSettings()
+    string SettingsDirectoryPath()
     {
-      Servers.Add(new Server("ゲストOS", "localhost", 7144));
-      Servers.Add(new Server("ホストOS", "windows", 7144));
-      DefaultServer = Servers[0];
+      var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+      return Path.Combine(appData, "ginger");
     }
 
-    void SaveSettings()
+    string SettingsFilePath()
     {
+      return Path.Combine(SettingsDirectoryPath(), "settings.json");
+    }
+
+    GingerSettings Settings;
+    void LoadSettings()
+    {
+      Directory.CreateDirectory(SettingsDirectoryPath());
+      string text;
+      try {
+        text = File.ReadAllText(SettingsFilePath());
+        Settings = JsonConvert.DeserializeObject<GingerSettings>(text);
+      } catch (FileNotFoundException) {
+        Settings = new GingerSettings();
+        SaveSettings();
+      }
+      Servers = Settings.servers;
+//      Servers.Add(new Server("ゲストOS", "localhost", 7144));
+//      Servers.Add(new Server("ホストOS", "windows", 7144));
+    }
+
+    public void SaveSettings()
+    {
+      var text = JsonConvert.SerializeObject(Settings, Formatting.Indented);
+      Directory.CreateDirectory(SettingsDirectoryPath());
+      File.WriteAllText(SettingsFilePath(), text);
     }
 
     public void RequestExit()
@@ -88,7 +105,15 @@ namespace ginger
     public string VersionString {
       get { return "ginger version 0.0.1"; }
     }
+  }
 
-    public Image Icon;
+  class GingerSettings
+  {
+    public List<Server> servers;
+
+    public GingerSettings()
+    {
+      servers = new List<Server>();
+    }
   }
 }

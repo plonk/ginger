@@ -15,8 +15,9 @@ namespace ginger
     Label _messageArea;
     MenuItem _browserMenuItem;
     MenuItem _quitMenuItem;
-    MenuItem _prefsMenuItem;
+    MenuItem _serversMenuItem;
     MenuItem _aboutMenuItem;
+    Button _editServersButton;
 
     // ウィジェットの作成とコールバックの設定。
     void Build()
@@ -63,6 +64,8 @@ namespace ginger
       hbox.PackStart(new Label("サーバー:"));
       _comboBox = new ComboBox();
       hbox.PackStart(_comboBox, true, true); // expand, fill
+      _editServersButton = new Button("編集") { WidthRequest = 50 };
+      hbox.PackStart(_editServersButton);
       return hbox;
     }
 
@@ -83,8 +86,8 @@ namespace ginger
     {
       var editMenuItem = new MenuItem("編集");
       var editMenu = new Menu();
-      _prefsMenuItem = new MenuItem("設定");
-      editMenu.Items.Add(_prefsMenuItem);
+      _serversMenuItem = new MenuItem("サーバーの設定");
+      editMenu.Items.Add(_serversMenuItem);
       editMenuItem.SubMenu = editMenu;
       return editMenuItem;
     }

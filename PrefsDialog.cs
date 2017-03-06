@@ -25,7 +25,7 @@ namespace ginger
       _listBox = new ListBox();
 
       _listBox.SelectionChanged += (sender, e) => {
-        LoadFields();
+        Update();
       };
 
       PopulateListBox();
@@ -46,40 +46,59 @@ namespace ginger
       table.Add(_hostname, 1, 1, 1, 1, true, true);
       table.Add(_port, 1, 2, 1, 1, false, false, WidgetPlacement.Start);
 
+      _name.Changed += (sender, e) => {
+        ((Server) _listBox.SelectedItem).Name = _name.Text;
+      };
+      _hostname.Changed += (sender, e) => {
+        ((Server) _listBox.SelectedItem).Hostname = _hostname.Text;
+      };
+      _port.ValueChanged += (sender, e) => {
+        ((Server) _listBox.SelectedItem).Port = (int) _port.Value;
+      };
+
       vbox.PackStart(table);
 
       var okButton = new DialogButton(Command.Ok);
-      okButton.Clicked += (sender, e) => Respond(Command.Ok);
-      var cancelButton = new DialogButton(Command.Cancel);
-      cancelButton.Clicked += (sender, e) => Respond(Command.Cancel);
+      okButton.Clicked += (sender, e) => {
+        _context.Ginger.Servers.Clear();
+        foreach (Server server in _listBox.Items) {
+          _context.Ginger.Servers.Add(server);
+        }
+        Respond(Command.Ok);
+        Close();
+      };
       Buttons.Add(okButton);
-      Buttons.Add(cancelButton);
       Content = vbox;
 
-      LoadFields();
+      Update();
+
+      Closed += (sender, e) => {
+        _context.Ginger.SaveSettings();
+      };
     }
 
     void PopulateListBox()
     {
+      _listBox.Items.Clear();
       foreach (var server in _context.Ginger.Servers) {
-        string name = $"{server.Hostname}:{server.Port}";
-        _listBox.Items.Add(server, name);
+        _listBox.Items.Add(server, server.Name);
       }
     }
 
-    void LoadFields()
+    void Update()
     {
       var server = (Server) _listBox.SelectedItem;
       if (server == null) {
         _name.Text = "";
         _hostname.Text = "";
         _port.Value = 0;
-        return;
+        _name.Sensitive = _hostname.Sensitive = _port.Sensitive = false;
       }
       else {
         _name.Text = server.Name;
         _hostname.Text = server.Hostname;
         _port.Value = server.Port;
+        _name.Sensitive = _hostname.Sensitive = _port.Sensitive = true;
       }
     }
 
@@ -89,11 +108,20 @@ namespace ginger
 
       _addButton = new Button("追加");
       _deleteButton = new Button("削除");
-
       _addButton.Clicked += (sender, e) => {
         var server = new Server("新規サーバー", "", 7144);
-        _listBox.Items.Add(server, "新規サーバー");
+        _context.Ginger.Servers.Add(server);
+        PopulateListBox();
         _listBox.SelectRow(_listBox.Items.Count - 1);
+      };
+      _deleteButton.Clicked += (sender, e) => {
+        var server = (Server) _listBox.SelectedItem;
+        if (server != null) {
+          int row = _listBox.SelectedRow;
+          _context.Ginger.Servers.Remove(server);
+          PopulateListBox();
+          _listBox.SelectRow(Math.Min(row, _listBox.Items.Count - 1));
+        }
       };
 
       vbox.PackStart(_addButton);
