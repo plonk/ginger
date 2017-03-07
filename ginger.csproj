@@ -62,6 +62,7 @@
     <Compile Include="TrackInfoPage.cs" />
     <Compile Include="RootServersPage.cs" />
     <Compile Include="PrefsDialog.cs" />
+    <Compile Include="PasswordDialog.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

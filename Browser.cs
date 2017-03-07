@@ -35,6 +35,15 @@ namespace ginger
         ginger.RequestExit();
       };
 
+      _clearPasswordsMenuItem.Clicked += (sender, e) => {
+        foreach (var server in _context.Ginger.Servers) {
+          server.Username = null;
+          server.Password = null;
+        }
+        _context.Ginger.SaveSettings();
+        MessageDialog.ShowMessage(_context.Window, "全てのパスワードを消去しました。");
+      };
+
       _serversMenuItem.Clicked += (sender, e) => {
         var dialog = new PrefsDialog(_context);
         dialog.Run(_context.Window);
@@ -156,14 +165,21 @@ namespace ginger
           var msec = (int) (DateTime.Now - t).TotalMilliseconds;
           _statusLabel.Text = $"更新開始……完了 ({msec}ms)";
         }
-//        catch (WebException e) {
-//          MessageDialog.ShowError(this, "エラー", e.Message);
-//          _context.Server = null;
-//          UpdateView();
-//          _statusLabel.Text = "エラー";
-//          throw;
-//        }
+        catch (JsonRpcClient.UnauthorizedException e) {
+          using (var dialog = new PasswordDialog() { TransientFor = this }) {
+            dialog.Title = e.Message;
+            var response = dialog.Run();
+            if (response == Command.Ok) {
+              _context.Server.Username = dialog.Username;
+              _context.Server.Password = dialog.Password;
+              _context.Ginger.SaveSettings();
+              await UpdateAsync();
+            }
+          }
+          return;
+        }
         catch (Exception e) {
+          _autoReloadButton.Active = false;
           MessageDialog.ShowError(this, "エラー", e.Message);
           _context.Server = null;
           UpdateView();
@@ -176,7 +192,7 @@ namespace ginger
       }
 
       if (_context.Server != null) {
-        Title = $"{_context.Server.Hostname}:{_context.Server.Port} - ginger";
+        Title = $"{_context.Server.Name} ({_context.Server.Hostname}:{_context.Server.Port}) - ginger";
       }
       else {
         Title = "ginger";

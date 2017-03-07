@@ -75,7 +75,7 @@ namespace ginger
 
     SpinButton IntegerSpinButton()
     {
-      var button = new SpinButton { Digits = 0, IncrementValue = 1, MaximumValue = 999 };
+      var button = new SpinButton { Digits = 0, IncrementValue = 1, MaximumValue = Double.MaxValue };
       return button;
     }
 

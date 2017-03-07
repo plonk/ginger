@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace ginger
 {
@@ -57,6 +58,8 @@ namespace ginger
     {
       var req = CreateRequestMessage(method, args);
       var res = await _cli.SendAsync(req);
+      if (res.StatusCode == HttpStatusCode.Unauthorized)
+        throw new UnauthorizedException(res.Headers.WwwAuthenticate.ToString());
       var json = await res.Content.ReadAsStringAsync();
       Debug.Print(json);
       JObject obj = JObject.Parse(json);
@@ -68,12 +71,18 @@ namespace ginger
     {
       var req = CreateRequestMessage(method, args);
       var res = await _cli.SendAsync(req);
+      if (res.StatusCode == HttpStatusCode.Unauthorized)
+        throw new UnauthorizedException(res.Headers.WwwAuthenticate.ToString());
       var json = await res.Content.ReadAsStringAsync();
       Debug.Print(json);
       JObject obj = JObject.Parse(json);
       return JsonConvert.DeserializeObject<T>(obj["result"].ToString());
     }
 
+    public class UnauthorizedException : Exception
+    {
+      public UnauthorizedException (string message) : base(message) {}
+    }
   }
 
 }

@@ -15,10 +15,10 @@ namespace ginger
     TextEntry _desc = new TextEntry();
     TextEntry _url = new TextEntry();
     TextEntry _comment = new TextEntry();
-    Label _channelId = new Label();
-    Label _contentType = new Label();
-    Label _uptime = new Label();
-    Label _bitrate = new Label();
+    Label _channelId = new Label() { Ellipsize = EllipsizeMode.End, Selectable = true };
+    Label _contentType = new Label() { Selectable = true };
+    Label _uptime = new Label() { Selectable = true };
+    Label _bitrate = new Label() { Selectable = true };
 
     List<Widget> _entries;
 
@@ -110,7 +110,7 @@ namespace ginger
         channelId,
         i.ContentType,
         i.Bitrate.ToString(),
-        s.Uptime.ToString(),
+        InformationPage.FormatTimeSpan(TimeSpan.FromSeconds(s.Uptime)),
       };
       for (int j = 0; j < _entries.Count; j++) {
         SetText(_entries[j], values[j]);

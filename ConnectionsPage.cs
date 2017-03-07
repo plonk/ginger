@@ -15,6 +15,7 @@ namespace ginger
     DataField<string> _status = new DataField<string>();
     DataField<string> _remoteName = new DataField<string>();
     DataField<string> _totalRate = new DataField<string>();
+    DataField<Connection> _connection = new DataField<Connection>();
 
     public ConnectionsPage(BrowserContext context)
     {
@@ -22,7 +23,7 @@ namespace ginger
 
       Margin = 10;
 
-      _listStore = new ListStore(_protocolName, _type, _status, _remoteName, _totalRate);
+      _listStore = new ListStore(_protocolName, _type, _status, _remoteName, _totalRate, _connection);
       _listView.DataSource = _listStore;
       _listView.Columns.Add("プロトコル", _protocolName);
       //_listView.Columns.Add("タイプ", _type);
@@ -44,6 +45,21 @@ namespace ginger
       var disconnectButton = new Button("切断");
       var reconnectButton = new Button("再接続");
 
+      disconnectButton.Clicked += async (sender, e) => {
+        var conn = _listStore.GetValue(_listView.SelectedRow, _connection);
+        if (conn != null) {
+          await _context.Server.StopChannelConnectionAsync(_context.Channel.ChannelId, conn.ConnectionId);
+          await UpdateAsync();
+        }
+      };
+      reconnectButton.Clicked += async (sender, e) => {
+        var conn = _listStore.GetValue(_listView.SelectedRow, _connection);
+        if (conn != null) {
+          await _context.Server.RestartChannelConnectionAsync(_context.Channel.ChannelId, conn.ConnectionId);
+          await UpdateAsync();
+        }
+      };
+
       vbox.PackStart(disconnectButton);
       vbox.PackStart(reconnectButton);
 
@@ -57,7 +73,7 @@ namespace ginger
       return (int)Math.Round((recv + send) * 8 / 1000);
     }
 
-    async Task ChannelView.UpdateAsync()
+    public async Task UpdateAsync()
     {
       if (_context.Server == null || _context.Channel == null) {
         _listStore.Clear();
@@ -76,9 +92,10 @@ namespace ginger
           _type, connection.Type,
           _status, connection.Status,
           _remoteName, connection.RemoteName,
-          _totalRate, $"{bitrate}Kbps");
+          _totalRate, $"{bitrate}Kbps",
+          _connection, connection);
       }
-      if (index >= 0)
+      if (index >= 0 && index < _listView.DataSource.RowCount)
         _listView.SelectRow(index);
     }
   }

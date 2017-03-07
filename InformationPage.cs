@@ -12,11 +12,11 @@ namespace ginger
     : VBox, ServerView
   {
     BrowserContext _context;
-    Label _agentLabel;
-    Label _uptimeLabel;
-    Label _firewallLabel;
-    Label _globalIpLabel;
-    Label _localIpLabel;
+    Label _agentLabel = new Label { Selectable = true };
+    Label _uptimeLabel = new Label { Selectable = true };
+    Label _firewallLabel = new Label { Selectable = true };
+    Label _globalIpLabel = new Label { Selectable = true };
+    Label _localIpLabel = new Label { Selectable = true };
 
     public InformationPage(BrowserContext context)
     {
@@ -28,23 +28,18 @@ namespace ginger
       table.SetColumnSpacing(1, 10);
 
       table.Add(new Label("ソフトウェア"), 0, 0, 1, 1, false, false, WidgetPlacement.End);
-      _agentLabel = new Label();
       table.Add(_agentLabel, 1, 0);
 
       table.Add(new Label("稼働時間"), 0, 1, 1, 1, false, false, WidgetPlacement.End);
-      _uptimeLabel = new Label();
       table.Add(_uptimeLabel, 1, 1);
 
       table.Add(new Label("ファイアウォール"), 0, 2, 1, 1, false, false, WidgetPlacement.End);
-      _firewallLabel = new Label();
       table.Add(_firewallLabel, 1, 2);
 
       table.Add(new Label("グローバルIP"), 0, 3, 1, 1, false, false, WidgetPlacement.End);
-      _globalIpLabel = new Label();
       table.Add(_globalIpLabel, 1, 3);
 
       table.Add(new Label("ローカルIP"), 0, 4, 1, 1, false, false, WidgetPlacement.End);
-      _localIpLabel = new Label();
       table.Add(_localIpLabel, 1, 4);
 
       PackStart(table);
@@ -56,7 +51,7 @@ namespace ginger
       PackStart(imageView, true, WidgetPlacement.Center);
     }
 
-    static string FormatTimeSpan(TimeSpan span)
+    static public string FormatTimeSpan(TimeSpan span)
     {
       String result = "";
 

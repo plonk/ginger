@@ -52,7 +52,7 @@ namespace ginger
       if (_listBox.SelectedItem != null) {
         var server = (YellowPage) _listBox.SelectedItem;
         _name.Text = server.Name;
-        _announceUri.Text = server.AnnounceUri;
+        _announceUri.Text = server.AnnounceUri != null ? server.AnnounceUri : server.Uri;
         _channelsUri.Text = server.ChannelsUri;
       }
       else {
@@ -64,14 +64,8 @@ namespace ginger
     {
       var vbox = new VBox {WidthRequest = 80 };
 
-      _addButton = new Button("追加");
-      _addButton.Clicked += (sender, e) => {
-        MessageDialog.ShowMessage("まだ作ってありませんです。");
-      };
-      _deleteButton = new Button("削除");
-      _deleteButton.Clicked += (sender, e) =>  {
-        MessageDialog.ShowMessage("ないにゃあ……");
-      };
+      _addButton = new Button("追加") { Sensitive = false, TooltipText = "まだ作ってありませんです。"};
+      _deleteButton = new Button("削除") { Sensitive = false, TooltipText = "ないにゃあ……" };
 
       vbox.PackStart(_addButton);
       vbox.PackStart(_deleteButton);

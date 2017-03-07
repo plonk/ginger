@@ -71,30 +71,34 @@ namespace ginger
       var playButton = new Button("再生");
       playButton.Clicked += (sender, e) => {
         var channel = (Channel)_channelListBox.SelectedItem;
-        if (channel != null)
-          MessageDialog.AskQuestion($"{channel.Info.Name}を再生しようぜーっ",
-            new Command[] { Command.Ok });
+
+        if (channel != null) {
+          var hostname = _context.Server.Hostname;
+          var port = _context.Server.Port;
+          var id = channel.ChannelId;
+
+          Process.Start($"http://{hostname}:{port}/pls/{id}.m3u");
+        }
       };
       var disconnectButton = new Button("切断");
-      disconnectButton.Clicked += (sender, e) => {
+      disconnectButton.Clicked += async (sender, e) => {
         var channel = (Channel)_channelListBox.SelectedItem;
-        if (channel != null)
-          MessageDialog.AskQuestion($"{channel.Info.Name}を切断しようぜーっ",
-            new Command[] { Command.Ok });
+        if (channel != null) {
+          await _context.Server.StopChannelAsync(channel.ChannelId);
+          await UpdateAsync();
+        }
       };
       var reconnectButton = new Button("再接続");
-      reconnectButton.Clicked += (sender, e) => {
+      reconnectButton.Clicked += async (sender, e) => {
         var channel = (Channel)_channelListBox.SelectedItem;
-        if (channel != null)
-          MessageDialog.AskQuestion($"{channel.Info.Name}を再接続しようぜーっ",
-            new Command[] { Command.Ok }); 
+        if (channel != null) {
+          await _context.Server.BumpChannelAsync(channel.ChannelId);
+          await UpdateAsync();
+        }
       };
       var broadcastButton = new Button("配信...");
-      broadcastButton.Clicked += (sender, e) => {
-        MessageDialog.AskQuestion($"磯野ー！配信しようぜー！",
-          new Command[] { Command.Ok, Command.Cancel });
-        
-      };
+      broadcastButton.Sensitive = false;
+      broadcastButton.TooltipText = "未実装です。";
 
       foreach (var w in new Widget[] { playButton, disconnectButton, reconnectButton, broadcastButton }) {
         vbox.PackStart(w);
@@ -117,7 +121,7 @@ namespace ginger
       } 
     }
 
-    async Task ServerView.UpdateAsync()
+    public async Task UpdateAsync()
     {
       _isUpdating = true;
 

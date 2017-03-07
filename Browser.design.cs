@@ -15,6 +15,7 @@ namespace ginger
     Label _messageArea;
     MenuItem _browserMenuItem;
     MenuItem _quitMenuItem;
+    MenuItem _clearPasswordsMenuItem;
     MenuItem _serversMenuItem;
     MenuItem _aboutMenuItem;
     Button _editServersButton;
@@ -86,7 +87,9 @@ namespace ginger
     {
       var editMenuItem = new MenuItem("編集");
       var editMenu = new Menu();
+      _clearPasswordsMenuItem = new MenuItem("保存されたパスワードを消去");
       _serversMenuItem = new MenuItem("サーバーの設定");
+      editMenu.Items.Add(_clearPasswordsMenuItem);
       editMenu.Items.Add(_serversMenuItem);
       editMenuItem.SubMenu = editMenu;
       return editMenuItem;

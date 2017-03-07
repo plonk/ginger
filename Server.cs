@@ -11,13 +11,18 @@ namespace ginger
   {
     JsonRpcClient RpcClient {
       get {
-        return new JsonRpcClient($"http://{Hostname}:{Port}/api/1");
+        var client = new JsonRpcClient($"http://{Hostname}:{Port}/api/1");
+        if (Username != null)
+          client.Authorization = new Tuple<string,string>(Username, Password);
+        return client;
       }
     }
 
     public string Name;
     public string Hostname;
     public int Port;
+    public string Username;
+    public string Password;
 
     public Server(string name, string hostname, int port)
     {
@@ -109,6 +114,36 @@ namespace ginger
     {
       return await RpcClient.InvokeAsync<YellowPage[]>("getYellowPages");
     }
+
+    public Task StopChannelAsync(string channelId)
+    {
+      var args = new JObject();
+      args["channelId"] = channelId;
+      return RpcClient.InvokeAsync("stopChannel", args);
+    }
+
+    public Task BumpChannelAsync(string channelId)
+    {
+      var args = new JObject();
+      args["channelId"] = channelId;
+      return RpcClient.InvokeAsync("bumpChannel", args);
+    }
+
+    public Task StopChannelConnectionAsync(string channelId, int connectionId)
+    {
+      var args = new JObject();
+      args["channelId"] = channelId;
+      args["connectionId"] = connectionId;
+      return RpcClient.InvokeAsync("stopChannelConnection", args);
+    }
+
+    public Task RestartChannelConnectionAsync(string channelId, int connectionId)
+    {
+      var args = new JObject();
+      args["channelId"] = channelId;
+      args["connectionId"] = connectionId;
+      return RpcClient.InvokeAsync("restartChannelConnection", args);
+    }
   }
 
   public class Settings
@@ -158,6 +193,7 @@ namespace ginger
   {
     public int YellowPageId; // non-negative signed int32
     public string Name;
+    public string Uri; // for old versions
     public string AnnounceUri;
     public string ChannelsUri;
     public string Protocol;
