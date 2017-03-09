@@ -92,7 +92,12 @@ namespace ginger
       reconnectButton.Clicked += async (sender, e) => {
         var channel = (Channel)_channelListBox.SelectedItem;
         if (channel != null) {
-          await _context.Server.BumpChannelAsync(channel.ChannelId);
+          try {
+            await _context.Server.BumpChannelAsync(channel.ChannelId);
+          } catch (Exception ex) {
+            MessageDialog.ShowError(_context.Window, "エラー", ex.Message);
+            throw;
+          }
           await UpdateAsync();
         }
       };

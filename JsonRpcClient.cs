@@ -60,23 +60,23 @@ namespace ginger
       var res = await _cli.SendAsync(req);
       if (res.StatusCode == HttpStatusCode.Unauthorized)
         throw new UnauthorizedException(res.Headers.WwwAuthenticate.ToString());
+      else if (res.StatusCode != HttpStatusCode.OK)
+        throw new Exception($"Server responded {res.StatusCode}");
       var json = await res.Content.ReadAsStringAsync();
       Debug.Print(json);
       JObject obj = JObject.Parse(json);
-      // TODO: エラー処理
-      return obj["result"];
+      if (obj["error"] != null) {
+        throw new Exception(obj["error"]["message"] + " (" + obj["error"]["code"] + ")");
+      }
+      else {
+        return obj["result"];
+      }
     }
 
     public async Task<T> InvokeAsync<T>(string method, JObject args = null)
     {
-      var req = CreateRequestMessage(method, args);
-      var res = await _cli.SendAsync(req);
-      if (res.StatusCode == HttpStatusCode.Unauthorized)
-        throw new UnauthorizedException(res.Headers.WwwAuthenticate.ToString());
-      var json = await res.Content.ReadAsStringAsync();
-      Debug.Print(json);
-      JObject obj = JObject.Parse(json);
-      return JsonConvert.DeserializeObject<T>(obj["result"].ToString());
+      var result = await InvokeAsync(method, args);
+      return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(result));
     }
 
     public class UnauthorizedException : Exception

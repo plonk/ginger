@@ -129,12 +129,12 @@ namespace ginger
       return RpcClient.InvokeAsync("bumpChannel", args);
     }
 
-    public Task StopChannelConnectionAsync(string channelId, int connectionId)
+    public Task<bool> StopChannelConnectionAsync(string channelId, int connectionId)
     {
       var args = new JObject();
       args["channelId"] = channelId;
       args["connectionId"] = connectionId;
-      return RpcClient.InvokeAsync("stopChannelConnection", args);
+      return RpcClient.InvokeAsync<bool>("stopChannelConnection", args);
     }
 
     public Task RestartChannelConnectionAsync(string channelId, int connectionId)

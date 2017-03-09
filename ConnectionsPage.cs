@@ -48,14 +48,22 @@ namespace ginger
       disconnectButton.Clicked += async (sender, e) => {
         var conn = _listStore.GetValue(_listView.SelectedRow, _connection);
         if (conn != null) {
-          await _context.Server.StopChannelConnectionAsync(_context.Channel.ChannelId, conn.ConnectionId);
+          var success = await _context.Server.StopChannelConnectionAsync(_context.Channel.ChannelId, conn.ConnectionId);
+          if (!success)
+            MessageDialog.ShowError(_context.Window, "エラー", "切断に失敗しました。");
           await UpdateAsync();
         }
       };
       reconnectButton.Clicked += async (sender, e) => {
         var conn = _listStore.GetValue(_listView.SelectedRow, _connection);
         if (conn != null) {
-          await _context.Server.RestartChannelConnectionAsync(_context.Channel.ChannelId, conn.ConnectionId);
+          try {
+            await _context.Server.RestartChannelConnectionAsync(_context.Channel.ChannelId, conn.ConnectionId);
+          }
+          catch (Exception ex) {
+            MessageDialog.ShowError(_context.Window, "エラー", ex.Message);
+            throw;
+          }
           await UpdateAsync();
         }
       };
