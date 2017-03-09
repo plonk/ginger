@@ -78,7 +78,7 @@ namespace ginger
     {
       double recv = connection.RecvRate.HasValue ? connection.RecvRate.Value : 0.0;
       double send = connection.SendRate.HasValue ? connection.SendRate.Value : 0.0;
-      return (int)Math.Round((recv + send) * 8 / 1000);
+      return (int) Math.Round((recv + send) * 8 / 1000);
     }
 
     public async Task UpdateAsync()

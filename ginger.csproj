@@ -45,7 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Ginger.cs" />
-    <Compile Include="ServerAddDialog.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Browser.design.cs" />
     <Compile Include="Browser.cs" />
@@ -63,6 +62,7 @@
     <Compile Include="RootServersPage.cs" />
     <Compile Include="PrefsDialog.cs" />
     <Compile Include="PasswordDialog.cs" />
+    <Compile Include="RootServerAddDialog.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

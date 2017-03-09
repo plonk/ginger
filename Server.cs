@@ -144,6 +144,24 @@ namespace ginger
       args["connectionId"] = connectionId;
       return RpcClient.InvokeAsync("restartChannelConnection", args);
     }
+
+    public Task RemoveYellowPageAsync(int yellowPageId)
+    {
+      var args = new JObject();
+      args["yellowPageId"] = yellowPageId;
+      return RpcClient.InvokeAsync("removeYellowPage", args);
+    }
+
+    public Task AddYellowPageAsync(YellowPage yellowPage)
+    {
+      var args = new JObject();
+      args["protocol"] = "pcp";
+      args["name"] = yellowPage.Name;
+      args["uri"] = yellowPage.Uri;
+      args["announceUri"] = yellowPage.AnnounceUri;
+      args["channelsUri"] = yellowPage.ChannelsUri;
+      return RpcClient.InvokeAsync("addYellowPage", args);
+    }
   }
 
   public class Settings
