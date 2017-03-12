@@ -109,15 +109,15 @@ namespace ginger
           _context.Server = server;
         }
         UpdateView();
-        Application.Invoke(() => {
-          UpdateAsync().RunSynchronously();
+        Application.Invoke(async () => {
+          await UpdateAsync();
         });
       }
       else {
         _context.Server = _context.Ginger.Servers[0];
         UpdateView();
-        Application.Invoke(() => {
-          UpdateAsync().RunSynchronously();
+        Application.Invoke(async () => {
+          await UpdateAsync();
         });
       }
     }
