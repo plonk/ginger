@@ -10,9 +10,14 @@ namespace ginger
     ListBox _listBox;
     TextEntry _name = new TextEntry();
     TextEntry _hostname = new TextEntry();
-    SpinButton _port = new SpinButton { MaximumValue = 65535, IncrementValue = 1.0, Digits = 0 };
+    SpinButton _port = new SpinButton {
+      MaximumValue = 65535,
+      IncrementValue = 1.0,
+      Digits = 0
+    };
     Button _addButton;
     Button _deleteButton;
+    bool _updating;
 
     public PrefsDialog(BrowserContext context)
     {
@@ -25,7 +30,8 @@ namespace ginger
       _listBox = new ListBox();
 
       _listBox.SelectionChanged += (sender, e) => {
-        Update();
+        if (!_updating)
+          Update();
       };
 
       PopulateListBox();
@@ -47,13 +53,24 @@ namespace ginger
       table.Add(_port, 1, 2, 1, 1, false, false, WidgetPlacement.Start);
 
       _name.Changed += (sender, e) => {
-        ((Server) _listBox.SelectedItem).Name = _name.Text;
+        _updating = true;
+        var server = ((Server) _listBox.SelectedItem);
+        server.Name = _name.Text;
+        int row = _listBox.SelectedRow;
+        _listBox.Items.RemoveAt(row);
+        _listBox.Items.Insert(row, server, server.Name);
+        _listBox.SelectRow(row);
+        _updating = false;
       };
       _hostname.Changed += (sender, e) => {
-        ((Server) _listBox.SelectedItem).Hostname = _hostname.Text;
+        var server = (Server) _listBox.SelectedItem;
+        if (!_updating && server != null)
+          server.Hostname = _hostname.Text;
       };
       _port.ValueChanged += (sender, e) => {
-        ((Server) _listBox.SelectedItem).Port = (int) _port.Value;
+        var server = (Server) _listBox.SelectedItem;
+        if (!_updating && server != null)
+          server.Port = (int) _port.Value;
       };
 
       vbox.PackStart(table);
