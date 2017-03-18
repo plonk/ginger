@@ -3,7 +3,7 @@ using Xwt;
 
 namespace ginger
 {
-  public class PrefsDialog
+  public class ServerEditDialog
   : Dialog
   {
     BrowserContext _context;
@@ -19,7 +19,7 @@ namespace ginger
     Button _deleteButton;
     bool _updating;
 
-    public PrefsDialog(BrowserContext context)
+    public ServerEditDialog(BrowserContext context)
     {
       _context = context;
 

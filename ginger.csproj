@@ -60,9 +60,9 @@
     <Compile Include="SettingsPage.cs" />
     <Compile Include="TrackInfoPage.cs" />
     <Compile Include="RootServersPage.cs" />
-    <Compile Include="PrefsDialog.cs" />
     <Compile Include="PasswordDialog.cs" />
     <Compile Include="RootServerAddDialog.cs" />
+    <Compile Include="ServerEditDialog.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

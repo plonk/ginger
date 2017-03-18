@@ -45,7 +45,7 @@ namespace ginger
       };
 
       _serversMenuItem.Clicked += (sender, e) => {
-        var dialog = new PrefsDialog(_context);
+        var dialog = new ServerEditDialog(_context);
         dialog.Run(_context.Window);
         UpdateView();
       };
@@ -71,7 +71,7 @@ namespace ginger
       };
 
       _editServersButton.Clicked += (sender, e) => {
-        var dialog = new PrefsDialog(_context);
+        var dialog = new ServerEditDialog(_context);
         dialog.Run(_context.Window);
         UpdateView();
       };
