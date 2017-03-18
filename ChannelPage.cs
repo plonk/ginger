@@ -6,15 +6,13 @@ using System.Diagnostics;
 
 namespace ginger
 {
-  // ノートブックの「チャンネル」ページ
+  // サーバーノートブックのチャンネルページ。
   public class ChannelPage
     : VBox, ServerView
   {
     BrowserContext _context;
     ListBox _channelListBox;
-    Notebook _channelPropertiesNotebook;
-    int SelectedRow;
-
+    Notebook _channelNotebook;
     bool _isUpdating = false;
 
     public ChannelPage(BrowserContext context)
@@ -23,54 +21,51 @@ namespace ginger
 
       Margin = 10;
       Spacing = 10;
+
+      // チャンネルリストとコマンドボックス。
       var hbox = new HBox();
-
       _channelListBox = new ListBox();
-      SelectedRow = _channelListBox.SelectedRow;
       _channelListBox.SelectionChanged += async (sender, e) => {
-        if (_channelListBox.SelectedRow != SelectedRow) {
-          SelectedRow = _channelListBox.SelectedRow;
-          _context.Channel = (Channel)_channelListBox.SelectedItem;
+        _context.Channel = (Channel) _channelListBox.SelectedItem;
 
-          if (!_isUpdating) {
-            await UpdateChannelPropertiesAsync();
-          }
+        if (!_isUpdating) {
+          await UpdateNotebookAsync();
         }
       };
-
       var cmds = CommandBox();
-
       hbox.PackStart(_channelListBox, true);
       hbox.PackStart(cmds);
-
       PackStart(hbox);
 
-      _channelPropertiesNotebook = ChannelPropertiesNotebook();
-      _channelPropertiesNotebook.CurrentTabChanged += async (sender, e) => {
-        await UpdateChannelPropertiesAsync();
+      // チャンネルプロパティのノートブック。
+      _channelNotebook = ChannelNotebook();
+      _channelNotebook.CurrentTabChanged += async (sender, e) => {
+        await UpdateNotebookAsync();
       };
-
-      PackStart(_channelPropertiesNotebook, true, true);
+      PackStart(_channelNotebook, true, true);
     }
 
-    Notebook ChannelPropertiesNotebook()
+    // チャンネルプロパティのノートブックを作成。
+    Notebook ChannelNotebook()
     {
       var nb = new Notebook();
 
       nb.Add(new ChannelInfoPage(_context), "チャンネル情報");
-      nb.Add(new ConnectionsPage(_context), "接続");
+      nb.Add(new ConnectionsPage(_context), "接続一覧");
       nb.Add(new RelayTreePage(_context), "リレーツリー");
       nb.Add(new TrackInfoPage(_context), "トラック情報");
       return nb;
     }
 
+    // チャンネル操作のコマンドボタンボックスを作成。
     Widget CommandBox()
     {
       var vbox = new VBox { WidthRequest = 80 };
 
-      var playButton = new Button("再生");
-      playButton.Clicked += (sender, e) => {
-        var channel = (Channel)_channelListBox.SelectedItem;
+      // 再生
+      var play = new Button("再生");
+      play.Clicked += (sender, e) => {
+        var channel = (Channel) _channelListBox.SelectedItem;
 
         if (channel != null) {
           var hostname = _context.Server.Hostname;
@@ -80,41 +75,46 @@ namespace ginger
           Process.Start($"http://{hostname}:{port}/pls/{id}.m3u");
         }
       };
-      var disconnectButton = new Button("切断");
-      disconnectButton.Clicked += async (sender, e) => {
-        var channel = (Channel)_channelListBox.SelectedItem;
+      // 切断
+      var disconnect = new Button("切断");
+      disconnect.Clicked += async (sender, e) => {
+        var channel = (Channel) _channelListBox.SelectedItem;
         if (channel != null) {
           await _context.Server.StopChannelAsync(channel.ChannelId);
           await UpdateAsync();
         }
       };
-      var reconnectButton = new Button("再接続");
-      reconnectButton.Clicked += async (sender, e) => {
-        var channel = (Channel)_channelListBox.SelectedItem;
+      // 再接続
+      var reconnect = new Button("再接続");
+      reconnect.Clicked += async (sender, e) => {
+        var channel = (Channel) _channelListBox.SelectedItem;
         if (channel != null) {
           try {
             await _context.Server.BumpChannelAsync(channel.ChannelId);
-          } catch (Exception ex) {
+          }
+          catch (Exception ex) {
             MessageDialog.ShowError(_context.Window, "エラー", ex.Message);
             throw;
           }
           await UpdateAsync();
         }
       };
-      var broadcastButton = new Button("配信...");
-      broadcastButton.Sensitive = false;
-      broadcastButton.TooltipText = "未実装です。";
+      // 配信
+      var broadcast = new Button("配信...");
+      broadcast.Sensitive = false;
+      broadcast.TooltipText = "未実装です。";
 
-      foreach (var w in new Widget[] { playButton, disconnectButton, reconnectButton, broadcastButton }) {
+      foreach (var w in new Widget[] { play, disconnect, reconnect, broadcast }) {
         vbox.PackStart(w);
       }
       return vbox;
     }
 
-    async Task UpdateChannelPropertiesAsync()
+    // チャンネルプロパティのノートブックを更新。
+    async Task UpdateNotebookAsync()
     {
       try {
-        var page = _channelPropertiesNotebook.CurrentTab.Child as ChannelView;
+        var page = _channelNotebook.CurrentTab.Child as ChannelView;
 
         if (page != null) {
           await page.UpdateAsync();
@@ -126,13 +126,9 @@ namespace ginger
       } 
     }
 
-    public async Task UpdateAsync()
+    // チャンネルリストを更新。
+    void UpdateChannelListBox(Channel[] channels)
     {
-      _isUpdating = true;
-
-      var channels = await _context.Server.GetChannelsAsync();
-
-      // チャンネルリストを更新。
       int row = _channelListBox.SelectedRow;
       _channelListBox.Items.Clear();
       foreach (var channel in channels) {
@@ -140,9 +136,16 @@ namespace ginger
       }
       if (row >= 0)
         _channelListBox.SelectRow(row);
+    }
 
-      // チャンネルのプロパティのノートブックを更新。
-      await UpdateChannelPropertiesAsync();
+    // ServerView インターフェイスの実装。
+    public async Task UpdateAsync()
+    {
+      _isUpdating = true;
+
+      var channels = await _context.Server.GetChannelsAsync();
+      UpdateChannelListBox(channels);
+      await UpdateNotebookAsync();
 
       _isUpdating = false;
     }
