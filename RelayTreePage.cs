@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace ginger
 {
-  public class RelayTreePage : ScrollView, ChannelView
+  public class RelayTreePage : VBox, ChannelView
   {
     BrowserContext _context;
     DataField<string> _ipDataField;
@@ -21,7 +21,7 @@ namespace ginger
       _treeStore = new TreeStore(_ipDataField);
       _treeView = new TreeView { DataSource = _treeStore };
       _treeView.Columns.Add("IP", _ipDataField);
-      Content = _treeView;
+      PackStart(_treeView, true, true);
     }
 
     void SetSubtree(TreeNavigator nav, RelayNode host)

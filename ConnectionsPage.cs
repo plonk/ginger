@@ -30,11 +30,11 @@ namespace ginger
       _listView.Columns.Add("状態", _status);
       _listView.Columns.Add("リモート", _remoteName);
       _listView.Columns.Add("レート", _totalRate);
+      _listView.HeadersVisible = false;
         
-      var scrollView = new ScrollView(_listView);
       var buttonBox = ButtonBox();
 
-      PackStart(scrollView, true, true); // expand and fill
+      PackStart(_listView, true, true); // expand and fill
       PackStart(buttonBox);
     }
 
