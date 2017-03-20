@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace ginger
 {
-  public class ConnectionsPage : HBox, ChannelView
+  public class ConnectionsPage : VBox, ChannelView
   {
     BrowserContext _context;
     ListView _listView = new ListView();
@@ -40,7 +40,7 @@ namespace ginger
 
     Box ButtonBox()
     {
-      var vbox = new VBox { WidthRequest = 80 };
+      var box = new HBox();
 
       var disconnectButton = new Button("切断");
       var reconnectButton = new Button("再接続");
@@ -68,10 +68,10 @@ namespace ginger
         }
       };
 
-      vbox.PackStart(disconnectButton);
-      vbox.PackStart(reconnectButton);
+      box.PackStart(disconnectButton, true, true);
+      box.PackStart(reconnectButton, true, true);
 
-      return vbox;
+      return box;
     }
 
     int BitrateKbps(Connection connection)
@@ -90,7 +90,6 @@ namespace ginger
 
       var connections = await _context.Server.GetChannelConnectionsAsync(_context.Channel.ChannelId);
       int index = _listView.SelectedRow;
-      Debug.Print("index={0}", index);
       _listStore.Clear();
       foreach (var connection in connections) {
         int row = _listStore.AddRow();

@@ -34,7 +34,6 @@ namespace ginger
       _channelListView.HeadersVisible = false;
       _channelListView.SelectionChanged += async (sender, e) => {
         var channel = SelectedChannel();
-        if (channel != null)
           _context.Channel = channel;
         
         if (!_isUpdating) {
