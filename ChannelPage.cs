@@ -116,11 +116,22 @@ namespace ginger
         }
       };
       // 配信
-      var broadcast = new Button("配信...");
-      broadcast.Sensitive = false;
-      broadcast.TooltipText = "未実装です。";
+      var broadcast = new Button("配信...") { Sensitive = false, TooltipText = "未実装です。" };
+      // クリア
+      var clear = new Button("クリア") { TooltipText = "視聴中でないチャンネルを消去します。" };
+      clear.Clicked += async (sender, e) => {
+        var count = 0;
+        for (var i = 0; i < _channelListStore.RowCount; i++) {
+          var channel = _channelListStore.GetValue(i, _channel);
+          if (!channel.Status.IsBroadcasting && channel.Status.LocalDirects == 0) {
+            await _context.Server.StopChannelAsync(channel.ChannelId);
+            count++;
+          }
+        }
+        MessageDialog.ShowMessage("クリア", $"{count}個の視聴中でないチャンネルを消去しました。");
+      };
 
-      foreach (var w in new Widget[] { play, disconnect, reconnect, broadcast }) {
+      foreach (var w in new Widget[] { play, disconnect, reconnect, broadcast, clear }) {
         box.PackStart(w, true, true);
       }
       return box;

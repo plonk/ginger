@@ -108,7 +108,7 @@ namespace ginger
         i.Url,
         i.Comment,
         channelId,
-        i.ContentType,
+        i.ContentType == null ? "不明" : i.ContentType,
         i.Bitrate.ToString(),
         InformationPage.FormatTimeSpan(TimeSpan.FromSeconds(s.Uptime)),
       };

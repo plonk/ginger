@@ -40,7 +40,7 @@ namespace ginger
       hbox.PackStart(_listBox, true, true);
       hbox.PackStart(commandBox, false, WidgetPlacement.Center);
 
-      vbox.PackStart(hbox);
+      vbox.PackStart(hbox, true, true);
 
       var table = new Table();
 
