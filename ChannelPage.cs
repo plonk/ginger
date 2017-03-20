@@ -11,7 +11,11 @@ namespace ginger
     : VBox, ServerView
   {
     BrowserContext _context;
-    ListBox _channelListBox;
+    ListView _channelListView;
+    ListStore _channelListStore;
+    DataField<string> _name = new DataField<string>();
+    DataField<string> _status = new DataField<string>();
+    DataField<Channel> _channel = new DataField<Channel>();
     Notebook _channelNotebook;
     bool _isUpdating = false;
 
@@ -23,19 +27,23 @@ namespace ginger
       Spacing = 10;
 
       // チャンネルリストとコマンドボックス。
-      var hbox = new HBox();
-      _channelListBox = new ListBox();
-      _channelListBox.SelectionChanged += async (sender, e) => {
-        _context.Channel = (Channel) _channelListBox.SelectedItem;
-
+      _channelListStore = new ListStore(_name, _status, _channel);
+      _channelListView = new ListView(_channelListStore);
+      _channelListView.Columns.Add("名前", _name);
+      _channelListView.Columns.Add("状態", _status);
+      _channelListView.HeadersVisible = false;
+      _channelListView.SelectionChanged += async (sender, e) => {
+        var channel = SelectedChannel();
+        if (channel != null)
+          _context.Channel = channel;
+        
         if (!_isUpdating) {
           await UpdateNotebookAsync();
         }
       };
       var cmds = CommandBox();
-      hbox.PackStart(_channelListBox, true);
-      hbox.PackStart(cmds);
-      PackStart(hbox);
+      PackStart(_channelListView);
+      PackStart(cmds);
 
       // チャンネルプロパティのノートブック。
       _channelNotebook = ChannelNotebook();
@@ -43,6 +51,15 @@ namespace ginger
         await UpdateNotebookAsync();
       };
       PackStart(_channelNotebook, true, true);
+    }
+
+    Channel SelectedChannel()
+    {
+      var row = _channelListView.SelectedRow;
+      if (row != -1)
+        return _channelListStore.GetValue(row, _channel);
+      else
+        return null;
     }
 
     // チャンネルプロパティのノートブックを作成。
@@ -60,12 +77,12 @@ namespace ginger
     // チャンネル操作のコマンドボタンボックスを作成。
     Widget CommandBox()
     {
-      var vbox = new VBox { WidthRequest = 80 };
+      var box = new HBox();
 
       // 再生
       var play = new Button("再生");
       play.Clicked += (sender, e) => {
-        var channel = (Channel) _channelListBox.SelectedItem;
+        var channel = SelectedChannel();
 
         if (channel != null) {
           var hostname = _context.Server.Hostname;
@@ -78,7 +95,7 @@ namespace ginger
       // 切断
       var disconnect = new Button("切断");
       disconnect.Clicked += async (sender, e) => {
-        var channel = (Channel) _channelListBox.SelectedItem;
+        var channel = SelectedChannel();
         if (channel != null) {
           await _context.Server.StopChannelAsync(channel.ChannelId);
           await UpdateAsync();
@@ -87,7 +104,7 @@ namespace ginger
       // 再接続
       var reconnect = new Button("再接続");
       reconnect.Clicked += async (sender, e) => {
-        var channel = (Channel) _channelListBox.SelectedItem;
+        var channel = SelectedChannel();
         if (channel != null) {
           try {
             await _context.Server.BumpChannelAsync(channel.ChannelId);
@@ -105,9 +122,9 @@ namespace ginger
       broadcast.TooltipText = "未実装です。";
 
       foreach (var w in new Widget[] { play, disconnect, reconnect, broadcast }) {
-        vbox.PackStart(w);
+        box.PackStart(w, true, true);
       }
-      return vbox;
+      return box;
     }
 
     // チャンネルプロパティのノートブックを更新。
@@ -126,16 +143,27 @@ namespace ginger
       } 
     }
 
+    string ChannelStatus(Channel channel)
+    {
+      return $"{channel.Info.Bitrate}kbps " +
+        $"({channel.Status.TotalDirects}/{channel.Status.TotalRelays}) " +
+        $"[{channel.Status.LocalDirects}/{channel.Status.LocalRelays}] " +
+        $"{channel.Status.Status}";
+    }
+
     // チャンネルリストを更新。
     void UpdateChannelListBox(Channel[] channels)
     {
-      int row = _channelListBox.SelectedRow;
-      _channelListBox.Items.Clear();
+      int row = _channelListView.SelectedRow;
+      _channelListStore.Clear();
       foreach (var channel in channels) {
-        _channelListBox.Items.Add(channel, channel.Info.Name);
+        _channelListStore.SetValues(_channelListStore.AddRow(),
+          _name, channel.Info.Name,
+          _status, ChannelStatus(channel),
+          _channel, channel);
       }
       if (row >= 0)
-        _channelListBox.SelectRow(row);
+        _channelListView.SelectRow(row);
     }
 
     // ServerView インターフェイスの実装。
