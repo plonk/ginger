@@ -128,7 +128,8 @@ namespace ginger
             count++;
           }
         }
-        MessageDialog.ShowMessage("クリア", $"{count}個の視聴中でないチャンネルを消去しました。");
+        MessageDialog.ShowMessage(_context.Window, "クリア", $"{count}個の視聴中でないチャンネルを消去しました。");
+        await UpdateAsync();
       };
 
       foreach (var w in new Widget[] { play, disconnect, reconnect, broadcast, clear }) {
