@@ -103,7 +103,7 @@ namespace ginger
     }
 
     public string VersionString {
-      get { return "ginger version 0.0.1-beta"; }
+      get { return "ginger version 0.0.1-gamma"; }
     }
   }
 
