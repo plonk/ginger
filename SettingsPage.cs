@@ -71,6 +71,8 @@ namespace ginger
       settings.maxUpstreamRatePerChannel = (int)_maxUpstreamRatePerChannel.Value;
 
       await _context.Server.SetSettingsAsync(settings);
+      MessageDialog.ShowMessage(_context.Window, "設定を適用しました。");
+      await (this as ServerView).UpdateAsync();
     }
 
     SpinButton IntegerSpinButton()
