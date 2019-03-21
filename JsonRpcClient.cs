@@ -67,7 +67,7 @@ namespace ginger
       Debug.Print(json);
       JObject obj = JObject.Parse(json);
       if (obj["error"] != null) {
-        throw new Exception(obj["error"]["message"] + " (" + obj["error"]["code"] + ")");
+        throw new Exception(obj["error"]["message"] + " (Error code: " + obj["error"]["code"] + ")");
       }
       else {
         return obj["result"];
