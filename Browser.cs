@@ -11,7 +11,7 @@ namespace ginger
       : Window
   {
     BrowserContext _context;
-    bool _updating;
+    bool _updatingComboBox;
 
     public Browser(Ginger ginger)
     {
@@ -59,11 +59,10 @@ namespace ginger
         await UpdateAsync();
       };
 
-      ReloadComboBox();
-
       _comboBox.SelectionChanged += async (sender, e) => {
-        if (_updating)
+        if (_updatingComboBox) {
           return;
+        }
 
         _context.Server = (Server) _comboBox.SelectedItem;
         UpdateView();
@@ -84,12 +83,15 @@ namespace ginger
       UpdateView();
 
       Func<bool> callback = null;
-      callback = () => {
+      callback = () =>
+      {
         if (_autoReloadButton.Active) {
-          UpdateAsync().ContinueWith((prev) => {
+          UpdateAsync().ContinueWith((prev) =>
+          {
             Application.TimeoutInvoke(1000, callback);
           });
-        } else {
+        }
+        else {
           Application.TimeoutInvoke(1000, callback);
         }
         return false;
@@ -132,7 +134,7 @@ namespace ginger
 
     void UpdateView()
     {
-      _updating = true;
+      _updatingComboBox = true;
 
       ReloadComboBox();
       if (!_context.Ginger.Servers.Contains(_context.Server)) {
@@ -150,11 +152,11 @@ namespace ginger
         _messageArea.Hide();
       }
 
-      _updating = false;
+      _updatingComboBox = false;
     }
 
     // 更新処理
-    async Task UpdateAsync()
+    public async Task UpdateAsync()
     {
       var dataview = _notebook.CurrentTab.Child as ServerView;
       if (dataview != null) {

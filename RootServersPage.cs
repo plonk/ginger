@@ -8,12 +8,12 @@ namespace ginger
     : VBox, ServerView
   {
     BrowserContext _context;
-    ListBox _listBox = new ListBox();
+    ListBox _listBox = new ListBox() { HeightRequest = 120 };
     Button _addButton;
     Button _deleteButton;
-    Label _name = new Label();
-    Label _announceUri = new Label();
-    Label _channelsUri = new Label();
+    Label _name = new Label() { Selectable = true };
+    Label _announceUri = new Label() { Selectable = true };
+    Label _channelsUri = new Label() { Selectable = true };
 
     public RootServersPage(BrowserContext context)
     {
@@ -29,7 +29,7 @@ namespace ginger
       hbox.PackStart(_listBox, true, true);
 
       var commandBox = CommandBox();
-      hbox.PackStart(commandBox, false, WidgetPlacement.Center);
+      hbox.PackStart(commandBox, false, WidgetPlacement.Fill, WidgetPlacement.Fill);
 
       PackStart(hbox);
 
@@ -62,10 +62,32 @@ namespace ginger
 
     Widget CommandBox()
     {
-      var vbox = new VBox {WidthRequest = 80 };
+      var vbox = new VBox { WidthRequest = 80 };
 
-      _addButton = new Button("追加") { Sensitive = false, TooltipText = "まだ作ってありませんです。"};
-      _deleteButton = new Button("削除") { Sensitive = false, TooltipText = "ないにゃあ……" };
+      _addButton = new Button("追加...");
+      _addButton.Clicked += async (sender, e) =>
+      {
+        var dialog = new RootServerAddDialog();
+        var cmd = dialog.Run(_context.Window);
+        if (cmd == Command.Add) {
+          await _context.Server.AddYellowPageAsync(dialog.YellowPage);
+          await ((Browser) _context.Window).UpdateAsync();
+        }
+      };
+
+      _deleteButton = new Button("削除");
+      _deleteButton.Clicked += async (sender, e) =>
+      {
+        int row = _listBox.SelectedRow;
+        if (row >= 0) {
+          var yp = (YellowPage) _listBox.Items[row];
+          await _context.Server.RemoveYellowPageAsync(yp.YellowPageId);
+          await ((Browser) _context.Window).UpdateAsync();
+        }
+        else {
+          MessageDialog.ShowError(_context.Window, "エラー", "削除するYPが選択されていません。");
+        }
+      };
 
       vbox.PackStart(_addButton);
       vbox.PackStart(_deleteButton);

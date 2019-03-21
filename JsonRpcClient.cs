@@ -20,7 +20,8 @@ namespace ginger
     {
       Debug.Assert(endpoint != null);
       _endpoint = endpoint;
-      _cli = new HttpClient();
+      // 一番応答の遅いAPIだろうペカステの帯域測定が10秒なので、15秒あれば十分じゃないかと思う。
+      _cli = new HttpClient() { Timeout = TimeSpan.FromSeconds(15.0) };
     }
 
     string CreateRequestBody(string method, JObject args)
