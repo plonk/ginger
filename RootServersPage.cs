@@ -67,25 +67,35 @@ namespace ginger
       _addButton = new Button("追加...");
       _addButton.Clicked += async (sender, e) =>
       {
-        var dialog = new RootServerAddDialog();
-        var cmd = dialog.Run(_context.Window);
-        if (cmd == Command.Add) {
-          await _context.Server.AddYellowPageAsync(dialog.YellowPage);
-          await ((Browser) _context.Window).UpdateAsync();
+        try {
+          var dialog = new RootServerAddDialog();
+          var cmd = dialog.Run(_context.Window);
+          if (cmd == Command.Add) {
+            await _context.Server.AddYellowPageAsync(dialog.YellowPage);
+            await ((Browser)_context.Window).UpdateAsync();
+          }
+        }
+        catch (Exception ex) {
+          MessageDialog.ShowError("エラー", ex.Message);
         }
       };
 
       _deleteButton = new Button("削除");
       _deleteButton.Clicked += async (sender, e) =>
       {
-        int row = _listBox.SelectedRow;
-        if (row >= 0) {
-          var yp = (YellowPage) _listBox.Items[row];
-          await _context.Server.RemoveYellowPageAsync(yp.YellowPageId);
-          await ((Browser) _context.Window).UpdateAsync();
+        try {
+          int row = _listBox.SelectedRow;
+          if (row >= 0) {
+            var yp = (YellowPage)_listBox.Items[row];
+            await _context.Server.RemoveYellowPageAsync(yp.YellowPageId);
+            await ((Browser)_context.Window).UpdateAsync();
+          }
+          else {
+            MessageDialog.ShowError(_context.Window, "エラー", "削除するYPが選択されていません。");
+          }
         }
-        else {
-          MessageDialog.ShowError(_context.Window, "エラー", "削除するYPが選択されていません。");
+        catch (Exception ex) {
+          MessageDialog.ShowError("エラー", ex.Message);
         }
       };
 
