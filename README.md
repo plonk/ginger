@@ -1,6 +1,6 @@
 # ginger
 
-PeerCastStation を JSON RPC で操作するソフトです。
+PeerCastStation や PeerCast YT を JSON RPC で操作するソフトです。
 
 # Linux での起動方法
 
